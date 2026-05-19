@@ -10,12 +10,18 @@ export function calcularPuntos(p: Partido): { p1: number; p2: number } {
   if (setsP1 === 2) return { p1: 3, p2: 0 }
   if (setsP2 === 2) return { p1: 0, p2: 3 }
 
-  // Empate 1-1: con tiebreak el ganador 3, perdedor 1
+  // 1-1: con tiebreak
   if (p.tb_p1 !== null && p.tb_p2 !== null) {
+    if (p.tb_p1 === p.tb_p2) return { p1: 2, p2: 2 } // TB empatado = tiempo cortó durante TB
     return p.tb_p1 > p.tb_p2 ? { p1: 3, p2: 1 } : { p1: 1, p2: 3 }
   }
 
-  // Empate 1-1 sin tiebreak: 2 pts cada uno
+  // 1-1 sin tiebreak: tiempo cortó antes del TB
+  // Set 2 empatado = quedó inconcluso → gana quien ganó set 1 (3-0)
+  // Set 2 con ganador = cada uno ganó un set completo → empate (2-2)
+  if (p.set2_p1 === p.set2_p2) {
+    return p.set1_p1! > p.set1_p2! ? { p1: 3, p2: 0 } : { p1: 0, p2: 3 }
+  }
   return { p1: 2, p2: 2 }
 }
 

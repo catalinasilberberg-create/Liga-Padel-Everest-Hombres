@@ -36,16 +36,16 @@ export default async function PosicionesPage() {
         )}
       </div>
 
-      <div className="bg-blue-50 border border-blue-100 rounded-lg px-4 py-3 text-xs text-blue-700 flex gap-4">
+      <div className="bg-blue-50 border border-blue-100 rounded-lg px-4 py-3 text-xs text-blue-700 flex flex-wrap gap-x-4 gap-y-1">
         <span><strong>3 pts</strong> — Ganador</span>
-        <span><strong>2 pts</strong> — Empate (1-1 sin TB)</span>
+        <span><strong>2 pts</strong> — Empate</span>
         <span><strong>1 pt</strong> — Perdedor en TB</span>
         <span><strong>0 pts</strong> — Perdedor</span>
       </div>
 
       <div className="space-y-4">
         {tablas.map((g) => (
-          <TablaGrupo key={g.key} titulo={g.label} posiciones={g.posiciones} />
+          <TablaGrupo key={g.key} titulo={g.label} posiciones={g.posiciones} grupo={g.key} />
         ))}
       </div>
     </div>

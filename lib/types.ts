@@ -1,5 +1,22 @@
 export type Grupo = 'intermedia' | 'intermedia_alta' | 'avanzada'
 
+export function getLabelGrupo(grupo: Grupo): string {
+  switch (grupo) {
+    case 'intermedia':      return 'Intermedia'
+    case 'intermedia_alta': return 'Intermedia Alta'
+    case 'avanzada':        return 'Avanzada'
+  }
+}
+
+export function getColorGrupo(grupo: Grupo): { header: string; bg: string } {
+  const map: Record<Grupo, { header: string; bg: string }> = {
+    intermedia:      { header: '#0369a1', bg: '#f0f9ff' },
+    intermedia_alta: { header: '#1d4ed8', bg: '#eff6ff' },
+    avanzada:        { header: '#1e3a5f', bg: '#f0f4f8' },
+  }
+  return map[grupo] ?? { header: '#374151', bg: '#f9fafb' }
+}
+
 export interface Pareja {
   id: number
   jugador1: string

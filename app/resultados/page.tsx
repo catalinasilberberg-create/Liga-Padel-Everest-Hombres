@@ -36,7 +36,7 @@ export default async function ResultadosPage() {
 
       {fechasJugadas.map((fecha) => {
         const partidos = todosPartidos.filter(
-          (p) => p.fecha_id === fecha.id && p.jugado
+          (p) => p.fecha_id === fecha.id
         )
         if (partidos.length === 0) return null
 
@@ -56,7 +56,7 @@ export default async function ResultadosPage() {
                 <div key={g.key} className="mb-4">
                   <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">{g.label}</p>
                   <div className="grid gap-2 sm:grid-cols-2">
-                    {gPartidos.map((p) => <PartidoCard key={p.id} partido={p} />)}
+                    {gPartidos.map((p) => <PartidoCard key={p.id} partido={p} mostrarPendiente />)}
                   </div>
                 </div>
               )

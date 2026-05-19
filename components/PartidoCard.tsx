@@ -1,49 +1,85 @@
-import { Partido } from '@/lib/types'
+import { Partido, Grupo, getColorGrupo } from '@/lib/types'
 import { calcularPuntos, formatResultado } from '@/lib/calculos'
 
 interface Props {
   partido: Partido
-  mostrarGrupo?: boolean
+  grupo?: Grupo
+  mostrarPendiente?: boolean
 }
 
-export default function PartidoCard({ partido }: Props) {
+export default function PartidoCard({ partido, grupo, mostrarPendiente }: Props) {
   const pts = calcularPuntos(partido)
   const resultado = formatResultado(partido)
   const jugado = partido.jugado
+  const color = grupo ? getColorGrupo(grupo) : { header: '#1e3a5f', bg: '#f0f4f8' }
+
+  const ganadorP1 = jugado && pts.p1 > pts.p2
+  const ganadorP2 = jugado && pts.p2 > pts.p1
 
   return (
-    <div className={`rounded-lg border p-3 text-sm ${jugado ? 'bg-white border-gray-100' : 'bg-gray-50 border-dashed border-gray-200'}`}>
+    <div
+      style={{ borderLeftColor: color.header }}
+      className={`rounded-lg border border-gray-100 border-l-4 px-2.5 py-2 text-sm ${
+        jugado ? 'bg-white' : 'bg-gray-50'
+      }`}
+    >
       {/* Hora y lugar */}
-      <div className="flex justify-between items-center mb-2 text-xs text-gray-400">
-        <span>{partido.hora ?? ''}</span>
-        <span>{partido.lugar ? `${partido.lugar} ${partido.cancha ?? ''}` : ''}</span>
-      </div>
+      {(partido.hora || partido.lugar || partido.cancha) && (
+        <div className="flex items-center gap-1.5 mb-1.5">
+          {partido.hora && (
+            <span
+              style={{ backgroundColor: color.bg, color: color.header }}
+              className="text-xs font-semibold px-1.5 py-0.5 rounded"
+            >
+              {partido.hora}
+            </span>
+          )}
+          {(partido.lugar || partido.cancha) && (
+            <span className="text-xs text-gray-400">
+              {[partido.lugar, partido.cancha ? `· Cancha ${partido.cancha}` : ''].filter(Boolean).join(' ')}
+            </span>
+          )}
+        </div>
+      )}
 
       {/* Pareja 1 */}
       <div className="flex justify-between items-center">
-        <span className={`flex-1 ${jugado && pts.p1 > pts.p2 ? 'font-bold text-gray-800' : 'text-gray-600'}`}>
+        <span className={`flex-1 leading-tight text-xs ${ganadorP1 ? 'font-bold text-gray-900' : 'text-gray-600'}`}>
           {partido.pareja1?.nombre ?? ''}
         </span>
         {jugado && (
-          <span className={`ml-2 text-base font-bold w-5 text-right ${pts.p1 > pts.p2 ? 'text-[#1a3a5c]' : 'text-gray-300'}`}>
+          <span
+            className="ml-2 text-sm font-bold w-5 text-right tabular-nums"
+            style={{ color: ganadorP1 ? color.header : '#d1d5db' }}
+          >
             {pts.p1}
           </span>
         )}
       </div>
 
-      {/* Resultado */}
-      {jugado && (
-        <div className="text-center text-xs text-gray-400 my-1 font-mono">{resultado}</div>
+      {/* Resultado / vs */}
+      {jugado ? (
+        <div className="text-center text-xs text-gray-400 my-0.5 font-mono tracking-wider">
+          {resultado}
+        </div>
+      ) : mostrarPendiente ? (
+        <div className="text-center text-xs text-gray-300 my-0.5 font-mono tracking-wider">
+          0-0 &nbsp; 0-0
+        </div>
+      ) : (
+        <div className="text-center text-xs text-gray-300 my-0.5 font-medium">vs</div>
       )}
-      {!jugado && <div className="text-center text-xs text-gray-300 my-1">vs</div>}
 
       {/* Pareja 2 */}
       <div className="flex justify-between items-center">
-        <span className={`flex-1 ${jugado && pts.p2 > pts.p1 ? 'font-bold text-gray-800' : 'text-gray-600'}`}>
+        <span className={`flex-1 leading-tight text-xs ${ganadorP2 ? 'font-bold text-gray-900' : 'text-gray-600'}`}>
           {partido.pareja2?.nombre ?? ''}
         </span>
         {jugado && (
-          <span className={`ml-2 text-base font-bold w-5 text-right ${pts.p2 > pts.p1 ? 'text-[#1a3a5c]' : 'text-gray-300'}`}>
+          <span
+            className="ml-2 text-sm font-bold w-5 text-right tabular-nums"
+            style={{ color: ganadorP2 ? color.header : '#d1d5db' }}
+          >
             {pts.p2}
           </span>
         )}

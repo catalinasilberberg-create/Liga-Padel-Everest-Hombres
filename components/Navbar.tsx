@@ -8,6 +8,7 @@ const links = [
   { href: '/posiciones', label: 'Posiciones', icon: '🏆' },
   { href: '/fixture', label: 'Fixture', icon: '📅' },
   { href: '/resultados', label: 'Resultados', icon: '📊' },
+  { href: '/resultado', label: 'Mi resultado', icon: '🎾' },
 ]
 
 export default function Navbar() {
