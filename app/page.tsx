@@ -10,7 +10,7 @@ const GRUPOS: { key: Grupo; label: string }[] = [
   { key: 'avanzada', label: 'Avanzada' },
 ]
 
-export const revalidate = 60
+export const revalidate = 0
 
 export default async function HomePage() {
   const [proximaFecha, ultimaFecha] = await Promise.all([

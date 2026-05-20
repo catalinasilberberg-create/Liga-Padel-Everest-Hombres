@@ -1,7 +1,7 @@
 import { getFechas, getProximaFecha, getPartidos } from '@/lib/data'
 import FixtureTabs from '@/components/FixtureTabs'
 
-export const revalidate = 60
+export const revalidate = 0
 
 export default async function FixturePage() {
   const [todasFechas, proxima, partidos] = await Promise.all([
