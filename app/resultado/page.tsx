@@ -38,6 +38,7 @@ export default function ResultadoJugadoraPage() {
   const [tbp1, setTbp1] = useState('')
   const [tbp2, setTbp2] = useState('')
   const [guardando, setGuardando] = useState(false)
+  const [errorGuardado, setErrorGuardado] = useState('')
 
   useEffect(() => {
     supabase.from('parejas').select('*').order('grupo').order('jugador1').then(({ data }) => {
@@ -103,7 +104,13 @@ export default function ResultadoJugadoraPage() {
     })
 
     setGuardando(false)
-    if (res.ok) setPaso('exito')
+    if (res.ok) {
+      setPaso('exito')
+    } else if (res.status === 401) {
+      setErrorGuardado('Contraseña incorrecta')
+    } else {
+      setErrorGuardado('Error al guardar. Intenta de nuevo.')
+    }
   }
 
   if (paso === 'login') {
@@ -238,6 +245,7 @@ export default function ResultadoJugadoraPage() {
             </div>
           </div>
 
+          {errorGuardado && <p className="text-red-500 text-xs text-center">{errorGuardado}</p>}
           <button
             onClick={guardar}
             disabled={guardando}
