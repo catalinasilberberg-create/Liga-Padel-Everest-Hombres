@@ -48,6 +48,39 @@ export default async function PosicionesPage() {
           <TablaGrupo key={g.key} titulo={g.label} posiciones={g.posiciones} grupo={g.key} />
         ))}
       </div>
+
+      {/* Cuartos de Final proyectados */}
+      <div className="space-y-4">
+        <h2 className="text-lg font-bold text-[#1a3a5c]">Cuartos de Final Proyectados</h2>
+        <p className="text-xs text-gray-400 -mt-3">Se actualiza según posiciones actuales</p>
+        {tablas.map((g) => {
+          const pos = g.posiciones
+          if (pos.length < 8) return null
+          const cruces = [
+            { a: pos[0], b: pos[7] },
+            { a: pos[1], b: pos[6] },
+            { a: pos[2], b: pos[5] },
+            { a: pos[3], b: pos[4] },
+          ]
+          return (
+            <div key={g.key} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+              <div className="px-4 py-2.5 text-white bg-[#1a3a5c]">
+                <h3 className="font-bold text-sm uppercase tracking-wider">{g.label}</h3>
+              </div>
+              <div className="divide-y divide-gray-50">
+                {cruces.map(({ a, b }, i) => (
+                  <div key={i} className="flex items-center px-4 py-2.5 gap-3 text-sm">
+                    <span className="text-xs text-gray-400 w-14 shrink-0">{a.posicion}° vs {b.posicion}°</span>
+                    <span className="flex-1 font-medium text-gray-800 truncate">{a.pareja.nombre}</span>
+                    <span className="text-xs text-gray-300 shrink-0">vs</span>
+                    <span className="flex-1 font-medium text-gray-800 truncate text-right">{b.pareja.nombre}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )
+        })}
+      </div>
     </div>
   )
 }
