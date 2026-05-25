@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 
 const links = [
@@ -19,6 +20,7 @@ export default function Navbar() {
       {/* Top bar - desktop */}
       <header className="hidden md:flex bg-[#1a3a5c] text-white items-center justify-between px-8 py-3 shadow-md">
         <Link href="/" className="flex items-center gap-3">
+          <Image src="/logo.png" alt="Logo Liga Pádel Everest" width={40} height={40} className="rounded-full" />
           <span className="text-xl font-bold tracking-wide">LIGA DE PÁDEL EVEREST</span>
           <span className="text-sm text-blue-200 font-normal">Primer Semestre 2026</span>
         </Link>
@@ -40,7 +42,8 @@ export default function Navbar() {
       </header>
 
       {/* Mobile top bar */}
-      <header className="md:hidden bg-[#1a3a5c] text-white px-4 py-3 text-center shadow-md">
+      <header className="md:hidden bg-[#1a3a5c] text-white px-4 py-3 shadow-md flex items-center gap-3">
+        <Image src="/logo.png" alt="Logo Liga Pádel Everest" width={36} height={36} className="rounded-full" />
         <span className="font-bold text-base tracking-wide">LIGA PÁDEL EVEREST</span>
       </header>
 
