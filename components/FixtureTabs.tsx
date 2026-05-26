@@ -154,19 +154,8 @@ export default function FixtureTabs({ fechas, partidos, proximaId, qfPartidos, s
                 <h3 className="font-bold text-sm uppercase tracking-wider">{g.label}</h3>
               </div>
               <div className="divide-y divide-gray-50">
-                <div className="px-4 pt-3 pb-1">
-                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Ganadores</p>
-                  {g.ganadores.map((c, i) => (
-                    <div key={i} className="flex items-center gap-3 text-sm py-1.5">
-                      <span className="flex-1 font-medium text-gray-800 truncate">{c.a}</span>
-                      <span className="text-xs text-gray-300 shrink-0">vs</span>
-                      <span className="flex-1 font-medium text-gray-800 truncate text-right">{c.b}</span>
-                    </div>
-                  ))}
-                </div>
-                <div className="px-4 pt-3 pb-3">
-                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Perdedores</p>
-                  {g.perdedores.map((c, i) => (
+                <div className="px-4 py-2">
+                  {[...g.ganadores, ...g.perdedores].map((c, i) => (
                     <div key={i} className="flex items-center gap-3 text-sm py-1.5">
                       <span className="flex-1 font-medium text-gray-800 truncate">{c.a}</span>
                       <span className="text-xs text-gray-300 shrink-0">vs</span>
