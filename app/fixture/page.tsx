@@ -13,10 +13,12 @@ export default async function FixturePage() {
   const fechas = [...todasFechas].reverse()
   const proximaId = proxima?.id ?? fechas[0]?.id ?? null
 
+  const qfPartidos = await getPartidos(14)
+
   return (
     <div className="pb-4">
       <h1 className="text-xl font-bold text-[#1e3a5f] mb-4">Fixture</h1>
-      <FixtureTabs fechas={fechas} partidos={partidos} proximaId={proximaId} />
+      <FixtureTabs fechas={fechas} partidos={partidos} proximaId={proximaId} qfPartidos={qfPartidos} sfFechaId={12} />
     </div>
   )
 }
