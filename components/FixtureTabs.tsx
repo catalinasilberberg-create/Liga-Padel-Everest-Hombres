@@ -4,6 +4,28 @@ import { useState } from 'react'
 import PartidoCard from './PartidoCard'
 import { Partido, Fecha, Grupo, getColorGrupo } from '@/lib/types'
 
+const QF_NUMEROS: { num: number; p1: number; p2: number }[] = [
+  { num: 1,  p1: 8,  p2: 1  },
+  { num: 2,  p1: 6,  p2: 5  },
+  { num: 3,  p1: 4,  p2: 3  },
+  { num: 4,  p1: 7,  p2: 2  },
+  { num: 5,  p1: 16, p2: 9  },
+  { num: 6,  p1: 13, p2: 11 },
+  { num: 7,  p1: 15, p2: 10 },
+  { num: 8,  p1: 12, p2: 14 },
+  { num: 9,  p1: 18, p2: 23 },
+  { num: 10, p1: 22, p2: 21 },
+  { num: 11, p1: 19, p2: 20 },
+  { num: 12, p1: 24, p2: 17 },
+]
+
+function getNumeroPartido(p: Partido): number | undefined {
+  return QF_NUMEROS.find(
+    (q) => (q.p1 === p.pareja1_id && q.p2 === p.pareja2_id) ||
+           (q.p2 === p.pareja1_id && q.p1 === p.pareja2_id)
+  )?.num
+}
+
 const GRUPOS: { key: Grupo; label: string }[] = [
   { key: 'intermedia',      label: 'Intermedia' },
   { key: 'intermedia_alta', label: 'Intermedia Alta' },
@@ -79,7 +101,7 @@ export default function FixtureTabs({ fechas, partidos, proximaId }: Props) {
               </div>
               <div className="grid gap-1.5 sm:grid-cols-2">
                 {gPartidos.map((p) => (
-                  <PartidoCard key={p.id} partido={p} grupo={g.key} />
+                  <PartidoCard key={p.id} partido={p} grupo={g.key} numeroPartido={getNumeroPartido(p)} />
                 ))}
               </div>
             </div>

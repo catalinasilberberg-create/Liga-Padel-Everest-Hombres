@@ -65,14 +65,8 @@ export default async function PosicionesPage() {
   }
 
   const sfSlot = (num: number, tipo: 'winner' | 'loser'): string => {
-    const p = qfByNum[num]
-    const result = getWinnerLoser(p)
-    if (!result) {
-      // No jugado: proyectar según ranking (pareja1 = mejor rankeado)
-      const n1 = p?.pareja1?.nombre ?? `Gan. P${num}`
-      const n2 = p?.pareja2?.nombre ?? `Per. P${num}`
-      return tipo === 'winner' ? n1 : n2
-    }
+    const result = getWinnerLoser(qfByNum[num])
+    if (!result) return '—'
     return tipo === 'winner' ? result.winner : result.loser
   }
 

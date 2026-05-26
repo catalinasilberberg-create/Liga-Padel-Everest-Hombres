@@ -5,9 +5,10 @@ interface Props {
   partido: Partido
   grupo?: Grupo
   mostrarPendiente?: boolean
+  numeroPartido?: number
 }
 
-export default function PartidoCard({ partido, grupo, mostrarPendiente }: Props) {
+export default function PartidoCard({ partido, grupo, mostrarPendiente, numeroPartido }: Props) {
   const pts = calcularPuntos(partido)
   const resultado = formatResultado(partido)
   const jugado = partido.jugado
@@ -23,6 +24,11 @@ export default function PartidoCard({ partido, grupo, mostrarPendiente }: Props)
         jugado ? 'bg-white' : 'bg-gray-50'
       }`}
     >
+      {/* Número de partido (cuartos/semis) */}
+      {numeroPartido && (
+        <div className="text-xs font-semibold text-gray-400 mb-1">Partido {numeroPartido}</div>
+      )}
+
       {/* Hora y lugar */}
       {(partido.hora || partido.lugar || partido.cancha) && (
         <div className="flex items-center gap-1.5 mb-1.5">
