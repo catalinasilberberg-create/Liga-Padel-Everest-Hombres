@@ -153,15 +153,36 @@ export default function FixtureTabs({ fechas, partidos, proximaId, qfPartidos, s
               <div className="px-4 py-2.5 bg-[#1e3a5f] text-white">
                 <h3 className="font-bold text-sm uppercase tracking-wider">{g.label}</h3>
               </div>
-              <div className="divide-y divide-gray-50">
-                <div className="px-4 py-2">
-                  {[...g.ganadores, ...g.perdedores].map((c, i) => (
-                    <div key={i} className="flex items-center gap-3 text-sm py-1.5">
-                      <span className="flex-1 font-medium text-gray-800 truncate">{c.a}</span>
-                      <span className="text-xs text-gray-300 shrink-0">vs</span>
-                      <span className="flex-1 font-medium text-gray-800 truncate text-right">{c.b}</span>
-                    </div>
-                  ))}
+              <div className="divide-y divide-gray-100">
+                {/* Ganadores → Semifinales */}
+                <div className="flex items-stretch">
+                  <div className="flex-1 px-4 py-1 divide-y divide-gray-50">
+                    {g.ganadores.map((c, i) => (
+                      <div key={i} className="flex items-center gap-3 text-sm py-1.5">
+                        <span className="flex-1 font-medium text-gray-800 truncate">{c.a}</span>
+                        <span className="text-xs text-gray-300 shrink-0">vs</span>
+                        <span className="flex-1 font-medium text-gray-800 truncate text-right">{c.b}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="flex items-center justify-center bg-green-600 text-white px-2.5 min-w-[4.5rem]">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-center leading-tight">SEMI<br/>FINALES</span>
+                  </div>
+                </div>
+                {/* Perdedores → Demás lugares */}
+                <div className="flex items-stretch">
+                  <div className="flex-1 px-4 py-1 divide-y divide-gray-50">
+                    {g.perdedores.map((c, i) => (
+                      <div key={i} className="flex items-center gap-3 text-sm py-1.5">
+                        <span className="flex-1 font-medium text-gray-800 truncate">{c.a}</span>
+                        <span className="text-xs text-gray-300 shrink-0">vs</span>
+                        <span className="flex-1 font-medium text-gray-800 truncate text-right">{c.b}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="flex items-center justify-center bg-gray-400 px-2.5 min-w-[4.5rem]">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-white text-center leading-tight">DEMÁS<br/>LUGARES</span>
+                  </div>
                 </div>
               </div>
             </div>

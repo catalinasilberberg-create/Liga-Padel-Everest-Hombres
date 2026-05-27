@@ -73,29 +73,35 @@ export default async function PosicionesPage() {
   const sfGrupos = [
     {
       label: 'Intermedia',
-      cruces: [
-        { titulo: 'Ganadores', a: sfSlot(1, 'winner'), b: sfSlot(4, 'winner') },
-        { titulo: null,        a: sfSlot(2, 'winner'), b: sfSlot(3, 'winner') },
-        { titulo: 'Perdedores', a: sfSlot(1, 'loser'), b: sfSlot(4, 'loser') },
-        { titulo: null,         a: sfSlot(2, 'loser'), b: sfSlot(3, 'loser') },
+      ganadores: [
+        { a: sfSlot(1, 'winner'), b: sfSlot(4, 'winner') },
+        { a: sfSlot(2, 'winner'), b: sfSlot(3, 'winner') },
+      ],
+      perdedores: [
+        { a: sfSlot(1, 'loser'), b: sfSlot(4, 'loser') },
+        { a: sfSlot(2, 'loser'), b: sfSlot(3, 'loser') },
       ],
     },
     {
       label: 'Intermedia Alta',
-      cruces: [
-        { titulo: 'Ganadores', a: sfSlot(5, 'winner'), b: sfSlot(8, 'winner') },
-        { titulo: null,        a: sfSlot(6, 'winner'), b: sfSlot(7, 'winner') },
-        { titulo: 'Perdedores', a: sfSlot(5, 'loser'), b: sfSlot(8, 'loser') },
-        { titulo: null,         a: sfSlot(6, 'loser'), b: sfSlot(7, 'loser') },
+      ganadores: [
+        { a: sfSlot(5, 'winner'), b: sfSlot(8, 'winner') },
+        { a: sfSlot(6, 'winner'), b: sfSlot(7, 'winner') },
+      ],
+      perdedores: [
+        { a: sfSlot(5, 'loser'), b: sfSlot(8, 'loser') },
+        { a: sfSlot(6, 'loser'), b: sfSlot(7, 'loser') },
       ],
     },
     {
       label: 'Avanzada',
-      cruces: [
-        { titulo: 'Ganadores', a: sfSlot(9,  'winner'), b: sfSlot(12, 'winner') },
-        { titulo: null,        a: sfSlot(10, 'winner'), b: sfSlot(11, 'winner') },
-        { titulo: 'Perdedores', a: sfSlot(9,  'loser'), b: sfSlot(12, 'loser') },
-        { titulo: null,         a: sfSlot(10, 'loser'), b: sfSlot(11, 'loser') },
+      ganadores: [
+        { a: sfSlot(9,  'winner'), b: sfSlot(12, 'winner') },
+        { a: sfSlot(10, 'winner'), b: sfSlot(11, 'winner') },
+      ],
+      perdedores: [
+        { a: sfSlot(9,  'loser'), b: sfSlot(12, 'loser') },
+        { a: sfSlot(10, 'loser'), b: sfSlot(11, 'loser') },
       ],
     },
   ]
@@ -164,21 +170,37 @@ export default async function PosicionesPage() {
             <div className="px-4 py-2.5 text-white bg-[#1a3a5c]">
               <h3 className="font-bold text-sm uppercase tracking-wider">{g.label}</h3>
             </div>
-            <div className="divide-y divide-gray-50">
-              {g.cruces.map((cruce, i) => (
-                <div key={i} className="px-4 py-2.5">
-                  {cruce.titulo && (
-                    <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1.5">
-                      {cruce.titulo}
-                    </p>
-                  )}
-                  <div className="flex items-center gap-3 text-sm">
-                    <span className="flex-1 font-medium text-gray-800 truncate">{cruce.a}</span>
-                    <span className="text-xs text-gray-300 shrink-0">vs</span>
-                    <span className="flex-1 font-medium text-gray-800 truncate text-right">{cruce.b}</span>
-                  </div>
+            <div className="divide-y divide-gray-100">
+              {/* Ganadores → Semifinales */}
+              <div className="flex items-stretch">
+                <div className="flex-1 px-4 py-1 divide-y divide-gray-50">
+                  {g.ganadores.map((c, i) => (
+                    <div key={i} className="flex items-center gap-3 text-sm py-1.5">
+                      <span className="flex-1 font-medium text-gray-800 truncate">{c.a}</span>
+                      <span className="text-xs text-gray-300 shrink-0">vs</span>
+                      <span className="flex-1 font-medium text-gray-800 truncate text-right">{c.b}</span>
+                    </div>
+                  ))}
                 </div>
-              ))}
+                <div className="flex items-center justify-center bg-green-600 text-white px-2.5 min-w-[4.5rem]">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-center leading-tight">SEMI<br/>FINALES</span>
+                </div>
+              </div>
+              {/* Perdedores → Demás lugares */}
+              <div className="flex items-stretch">
+                <div className="flex-1 px-4 py-1 divide-y divide-gray-50">
+                  {g.perdedores.map((c, i) => (
+                    <div key={i} className="flex items-center gap-3 text-sm py-1.5">
+                      <span className="flex-1 font-medium text-gray-800 truncate">{c.a}</span>
+                      <span className="text-xs text-gray-300 shrink-0">vs</span>
+                      <span className="flex-1 font-medium text-gray-800 truncate text-right">{c.b}</span>
+                    </div>
+                  ))}
+                </div>
+                <div className="flex items-center justify-center bg-gray-400 px-2.5 min-w-[4.5rem]">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-white text-center leading-tight">DEMÁS<br/>LUGARES</span>
+                </div>
+              </div>
             </div>
           </div>
         ))}
