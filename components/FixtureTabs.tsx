@@ -64,7 +64,7 @@ export default function FixtureTabs({ fechas, partidos, proximaId, qfPartidos, s
 
   const partidosFecha = partidos.filter((p) => p.fecha_id === fechaSeleccionada)
   const fechaActual = fechas.find((f) => f.id === fechaSeleccionada)
-  const esSF = sfFechaId !== undefined && fechaSeleccionada === sfFechaId
+  const esSF = sfFechaId !== undefined && fechaSeleccionada === sfFechaId && partidosFecha.length === 0
 
   const slot = (num: number, tipo: 'winner' | 'loser') => {
     if (!qfPartidos) return tipo === 'winner' ? `Gan. P${num}` : `Per. P${num}`
