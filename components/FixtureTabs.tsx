@@ -27,7 +27,9 @@ function getNumeroPartido(p: Partido): number | undefined {
   )?.num
 }
 
-function getWinnerLoser(qfPartidos: Partido[], num: number): { winner: string; loser: string } | null {
+// ── QF helpers ───────────────────────────────────────────────────────────────
+
+function getQFWinnerLoser(qfPartidos: Partido[], num: number): { winner: string; loser: string } | null {
   const qf = QF_NUMEROS.find((q) => q.num === num)
   if (!qf) return null
   const p = qfPartidos.find(
@@ -43,6 +45,63 @@ function getWinnerLoser(qfPartidos: Partido[], num: number): { winner: string; l
   return { winner: n1, loser: n2 }
 }
 
+function getQFWinnerLoserId(qfPartidos: Partido[], num: number): { winner: number; loser: number } | null {
+  const qf = QF_NUMEROS.find((q) => q.num === num)
+  if (!qf) return null
+  const p = qfPartidos.find(
+    (x) => (x.pareja1_id === qf.p1 && x.pareja2_id === qf.p2) ||
+            (x.pareja1_id === qf.p2 && x.pareja2_id === qf.p1)
+  )
+  if (!p || !p.jugado || p.set1_p1 === null) return null
+  const pts = calcularPuntos(p)
+  if (pts.p1 > pts.p2) return { winner: p.pareja1_id, loser: p.pareja2_id }
+  if (pts.p2 > pts.p1) return { winner: p.pareja2_id, loser: p.pareja1_id }
+  return { winner: p.pareja1_id, loser: p.pareja2_id }
+}
+
+// ── SF helpers ───────────────────────────────────────────────────────────────
+
+function buildSFPairing(qfPartidos: Partido[], sfNum: number): { p1: number; p2: number } | null {
+  const r = (n: number) => getQFWinnerLoserId(qfPartidos, n)
+  const pairs: Record<number, () => { p1: number; p2: number } | null> = {
+    1:  () => { const a=r(1),  b=r(4);  return a&&b ? {p1:a.winner,p2:b.winner} : null },
+    2:  () => { const a=r(2),  b=r(3);  return a&&b ? {p1:a.winner,p2:b.winner} : null },
+    3:  () => { const a=r(1),  b=r(4);  return a&&b ? {p1:a.loser, p2:b.loser } : null },
+    4:  () => { const a=r(2),  b=r(3);  return a&&b ? {p1:a.loser, p2:b.loser } : null },
+    5:  () => { const a=r(5),  b=r(8);  return a&&b ? {p1:a.winner,p2:b.winner} : null },
+    6:  () => { const a=r(6),  b=r(7);  return a&&b ? {p1:a.winner,p2:b.winner} : null },
+    7:  () => { const a=r(5),  b=r(8);  return a&&b ? {p1:a.loser, p2:b.loser } : null },
+    8:  () => { const a=r(6),  b=r(7);  return a&&b ? {p1:a.loser, p2:b.loser } : null },
+    9:  () => { const a=r(9),  b=r(12); return a&&b ? {p1:a.winner,p2:b.winner} : null },
+    10: () => { const a=r(10), b=r(11); return a&&b ? {p1:a.winner,p2:b.winner} : null },
+    11: () => { const a=r(9),  b=r(12); return a&&b ? {p1:a.loser, p2:b.loser } : null },
+    12: () => { const a=r(10), b=r(11); return a&&b ? {p1:a.loser, p2:b.loser } : null },
+  }
+  return pairs[sfNum]?.() ?? null
+}
+
+function getSFWinnerLoser(
+  sfPartidos: Partido[],
+  sfNum: number,
+  qfPartidos: Partido[]
+): { winner: string; loser: string } | null {
+  const pairing = buildSFPairing(qfPartidos, sfNum)
+  if (!pairing) return null
+  const p = sfPartidos.find(
+    (x) => (x.pareja1_id === pairing.p1 && x.pareja2_id === pairing.p2) ||
+            (x.pareja1_id === pairing.p2 && x.pareja2_id === pairing.p1)
+  )
+  if (!p || !p.jugado || p.set1_p1 === null) return null
+  const pts = calcularPuntos(p)
+  const n1 = p.pareja1?.nombre ?? '?'
+  const n2 = p.pareja2?.nombre ?? '?'
+  if (pts.p1 > pts.p2) return { winner: n1, loser: n2 }
+  if (pts.p2 > pts.p1) return { winner: n2, loser: n1 }
+  return { winner: n1, loser: n2 }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+
 const GRUPOS: { key: Grupo; label: string }[] = [
   { key: 'intermedia',      label: 'Intermedia' },
   { key: 'intermedia_alta', label: 'Intermedia Alta' },
@@ -54,57 +113,101 @@ interface Props {
   partidos: Partido[]
   proximaId: number | null
   qfPartidos?: Partido[]
+  sfPartidos?: Partido[]
   sfFechaId?: number
+  finalFechaId?: number
 }
 
-export default function FixtureTabs({ fechas, partidos, proximaId, qfPartidos, sfFechaId }: Props) {
+export default function FixtureTabs({
+  fechas, partidos, proximaId, qfPartidos, sfPartidos, sfFechaId, finalFechaId
+}: Props) {
   const [fechaSeleccionada, setFechaSeleccionada] = useState<number>(
     proximaId ?? fechas[0]?.id ?? 0
   )
 
   const partidosFecha = partidos.filter((p) => p.fecha_id === fechaSeleccionada)
-  const fechaActual = fechas.find((f) => f.id === fechaSeleccionada)
-  const esSF = sfFechaId !== undefined && fechaSeleccionada === sfFechaId && partidosFecha.length === 0
+  const fechaActual   = fechas.find((f) => f.id === fechaSeleccionada)
+  const esSF    = sfFechaId    !== undefined && fechaSeleccionada === sfFechaId
+  const esFinal = finalFechaId !== undefined && fechaSeleccionada === finalFechaId
 
+  // ── QF → SF bracket (con horario) ────────────────────────────────────────
   const slot = (num: number, tipo: 'winner' | 'loser') => {
     if (!qfPartidos) return tipo === 'winner' ? `Gan. P${num}` : `Per. P${num}`
-    const result = getWinnerLoser(qfPartidos, num)
-    if (!result) return tipo === 'winner' ? `Gan. P${num}` : `Per. P${num}`
-    return tipo === 'winner' ? result.winner : result.loser
+    const r = getQFWinnerLoser(qfPartidos, num)
+    if (!r) return tipo === 'winner' ? `Gan. P${num}` : `Per. P${num}`
+    return tipo === 'winner' ? r.winner : r.loser
   }
 
   const sfBracket = [
     {
       label: 'Intermedia',
       ganadores: [
-        { a: slot(1, 'winner'), b: slot(4, 'winner') },
-        { a: slot(2, 'winner'), b: slot(3, 'winner') },
+        { a: slot(1,'winner'), b: slot(4,'winner'), hora:'19:00', lugar:'PLT',     cancha:'1' },
+        { a: slot(2,'winner'), b: slot(3,'winner'), hora:'20:00', lugar:'PLT',     cancha:'1' },
       ],
       perdedores: [
-        { a: slot(1, 'loser'), b: slot(4, 'loser') },
-        { a: slot(2, 'loser'), b: slot(3, 'loser') },
+        { a: slot(1,'loser'),  b: slot(4,'loser'),  hora:'19:00', lugar:'PLT',     cancha:'2' },
+        { a: slot(2,'loser'),  b: slot(3,'loser'),  hora:'20:00', lugar:'PLT',     cancha:'2' },
       ],
     },
     {
       label: 'Intermedia Alta',
       ganadores: [
-        { a: slot(5, 'winner'), b: slot(8, 'winner') },
-        { a: slot(6, 'winner'), b: slot(7, 'winner') },
+        { a: slot(5,'winner'), b: slot(8,'winner'), hora:'19:00', lugar:'Everest', cancha:'2' },
+        { a: slot(6,'winner'), b: slot(7,'winner'), hora:'20:00', lugar:'Everest', cancha:'2' },
       ],
       perdedores: [
-        { a: slot(5, 'loser'), b: slot(8, 'loser') },
-        { a: slot(6, 'loser'), b: slot(7, 'loser') },
+        { a: slot(5,'loser'),  b: slot(8,'loser'),  hora:'21:00', lugar:'Everest', cancha:'1' },
+        { a: slot(6,'loser'),  b: slot(7,'loser'),  hora:'21:00', lugar:'Everest', cancha:'2' },
       ],
     },
     {
       label: 'Avanzada',
       ganadores: [
-        { a: slot(9,  'winner'), b: slot(12, 'winner') },
-        { a: slot(10, 'winner'), b: slot(11, 'winner') },
+        { a: slot(9, 'winner'), b: slot(12,'winner'), hora:'19:00', lugar:'Everest', cancha:'1' },
+        { a: slot(10,'winner'), b: slot(11,'winner'), hora:'20:00', lugar:'Everest', cancha:'1' },
       ],
       perdedores: [
-        { a: slot(9,  'loser'), b: slot(12, 'loser') },
-        { a: slot(10, 'loser'), b: slot(11, 'loser') },
+        { a: slot(9, 'loser'),  b: slot(12,'loser'),  hora:'19:00', lugar:'PLT',     cancha:'3' },
+        { a: slot(10,'loser'),  b: slot(11,'loser'),  hora:'20:00', lugar:'PLT',     cancha:'3' },
+      ],
+    },
+  ]
+
+  // ── SF → Final bracket ───────────────────────────────────────────────────
+  const sfSlot = (num: number, tipo: 'winner' | 'loser') => {
+    if (!sfPartidos || !qfPartidos) return tipo === 'winner' ? `Gan. SF${num}` : `Per. SF${num}`
+    const r = getSFWinnerLoser(sfPartidos, num, qfPartidos)
+    if (!r) return tipo === 'winner' ? `Gan. SF${num}` : `Per. SF${num}`
+    return tipo === 'winner' ? r.winner : r.loser
+  }
+
+  const finalBracket = [
+    {
+      label: 'Intermedia',
+      bloques: [
+        { titulo: 'Final · 1° / 2° Lugar', a: sfSlot(1,'winner'), b: sfSlot(2,'winner') },
+        { titulo: '3° / 4° Lugar',         a: sfSlot(1,'loser'),  b: sfSlot(2,'loser')  },
+        { titulo: '5° / 6° Lugar',         a: sfSlot(3,'winner'), b: sfSlot(4,'winner') },
+        { titulo: '7° / 8° Lugar',         a: sfSlot(3,'loser'),  b: sfSlot(4,'loser')  },
+      ],
+    },
+    {
+      label: 'Intermedia Alta',
+      bloques: [
+        { titulo: 'Final · 1° / 2° Lugar', a: sfSlot(5,'winner'), b: sfSlot(6,'winner') },
+        { titulo: '3° / 4° Lugar',         a: sfSlot(5,'loser'),  b: sfSlot(6,'loser')  },
+        { titulo: '5° / 6° Lugar',         a: sfSlot(7,'winner'), b: sfSlot(8,'winner') },
+        { titulo: '7° / 8° Lugar',         a: sfSlot(7,'loser'),  b: sfSlot(8,'loser')  },
+      ],
+    },
+    {
+      label: 'Avanzada',
+      bloques: [
+        { titulo: 'Final · 1° / 2° Lugar', a: sfSlot(9, 'winner'), b: sfSlot(10,'winner') },
+        { titulo: '3° / 4° Lugar',         a: sfSlot(9, 'loser'),  b: sfSlot(10,'loser')  },
+        { titulo: '5° / 6° Lugar',         a: sfSlot(11,'winner'), b: sfSlot(12,'winner') },
+        { titulo: '7° / 8° Lugar',         a: sfSlot(11,'loser'),  b: sfSlot(12,'loser')  },
       ],
     },
   ]
@@ -115,7 +218,7 @@ export default function FixtureTabs({ fechas, partidos, proximaId, qfPartidos, s
       {fechas.length > 1 && (
         <div className="flex gap-1.5 overflow-x-auto pb-2 mb-4 scrollbar-hide">
           {fechas.map((f) => {
-            const activa = f.id === fechaSeleccionada
+            const activa   = f.id === fechaSeleccionada
             const esProxima = f.id === proximaId
             return (
               <button
@@ -145,8 +248,8 @@ export default function FixtureTabs({ fechas, partidos, proximaId, qfPartidos, s
         </div>
       )}
 
-      {/* Bracket de semifinales proyectado */}
       {esSF ? (
+        /* ── Semifinales con horario ──────────────────────────────────── */
         <div className="space-y-4">
           {sfBracket.map((g) => (
             <div key={g.label} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
@@ -154,14 +257,17 @@ export default function FixtureTabs({ fechas, partidos, proximaId, qfPartidos, s
                 <h3 className="font-bold text-sm uppercase tracking-wider">{g.label}</h3>
               </div>
               <div className="divide-y divide-gray-100">
-                {/* Ganadores → Semifinales */}
                 <div className="flex items-stretch">
-                  <div className="flex-1 px-4 py-1 divide-y divide-gray-50">
+                  <div className="flex-1 px-3 py-1 divide-y divide-gray-50">
                     {g.ganadores.map((c, i) => (
-                      <div key={i} className="flex items-center gap-3 text-sm py-1.5">
-                        <span className="flex-1 font-medium text-gray-800 truncate">{c.a}</span>
+                      <div key={i} className="flex items-center gap-2 py-1.5">
+                        <div className="shrink-0 text-center w-16">
+                          <div className="text-xs font-bold text-[#1e3a5f]">{c.hora}</div>
+                          <div className="text-[10px] text-gray-400">{c.lugar} C{c.cancha}</div>
+                        </div>
+                        <span className="flex-1 text-xs font-medium text-gray-800 truncate">{c.a}</span>
                         <span className="text-xs text-gray-300 shrink-0">vs</span>
-                        <span className="flex-1 font-medium text-gray-800 truncate text-right">{c.b}</span>
+                        <span className="flex-1 text-xs font-medium text-gray-800 truncate text-right">{c.b}</span>
                       </div>
                     ))}
                   </div>
@@ -169,14 +275,17 @@ export default function FixtureTabs({ fechas, partidos, proximaId, qfPartidos, s
                     <span className="text-[10px] font-bold uppercase tracking-wider text-center leading-tight">SEMI<br/>FINALES</span>
                   </div>
                 </div>
-                {/* Perdedores → Demás lugares */}
                 <div className="flex items-stretch">
-                  <div className="flex-1 px-4 py-1 divide-y divide-gray-50">
+                  <div className="flex-1 px-3 py-1 divide-y divide-gray-50">
                     {g.perdedores.map((c, i) => (
-                      <div key={i} className="flex items-center gap-3 text-sm py-1.5">
-                        <span className="flex-1 font-medium text-gray-800 truncate">{c.a}</span>
+                      <div key={i} className="flex items-center gap-2 py-1.5">
+                        <div className="shrink-0 text-center w-16">
+                          <div className="text-xs font-bold text-[#1e3a5f]">{c.hora}</div>
+                          <div className="text-[10px] text-gray-400">{c.lugar} C{c.cancha}</div>
+                        </div>
+                        <span className="flex-1 text-xs font-medium text-gray-800 truncate">{c.a}</span>
                         <span className="text-xs text-gray-300 shrink-0">vs</span>
-                        <span className="flex-1 font-medium text-gray-800 truncate text-right">{c.b}</span>
+                        <span className="flex-1 text-xs font-medium text-gray-800 truncate text-right">{c.b}</span>
                       </div>
                     ))}
                   </div>
@@ -188,8 +297,32 @@ export default function FixtureTabs({ fechas, partidos, proximaId, qfPartidos, s
             </div>
           ))}
         </div>
+      ) : esFinal ? (
+        /* ── Final proyectada ─────────────────────────────────────────── */
+        <div className="space-y-4">
+          <p className="text-xs text-gray-400">Se actualiza según resultados de semifinales</p>
+          {finalBracket.map((g) => (
+            <div key={g.label} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+              <div className="px-4 py-2.5 bg-[#1e3a5f] text-white">
+                <h3 className="font-bold text-sm uppercase tracking-wider">{g.label}</h3>
+              </div>
+              <div className="divide-y divide-gray-50">
+                {g.bloques.map((b, i) => (
+                  <div key={i} className="px-4 py-2.5">
+                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">{b.titulo}</p>
+                    <div className="flex items-center gap-3 text-sm">
+                      <span className="flex-1 font-medium text-gray-800 truncate">{b.a}</span>
+                      <span className="text-xs text-gray-300 shrink-0">vs</span>
+                      <span className="flex-1 font-medium text-gray-800 truncate text-right">{b.b}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
       ) : (
-        /* Partidos normales */
+        /* ── Partidos normales ────────────────────────────────────────── */
         <div>
           {GRUPOS.map((g) => {
             const gPartidos = partidosFecha.filter((p) => p.pareja1?.grupo === g.key)
