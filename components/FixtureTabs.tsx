@@ -157,7 +157,7 @@ export default function FixtureTabs({
         { a: slot(6,'winner'), b: slot(7,'winner'), hora:'20:00', lugar:'Everest', cancha:'2' },
       ],
       perdedores: [
-        { a: slot(5,'loser'),  b: slot(8,'loser'),  hora:'21:00', lugar:'Everest', cancha:'1' },
+        { a: slot(5,'loser'),  b: slot(8,'loser'),  hora:'20:00', lugar:'Everest', cancha:'1' },
         { a: slot(6,'loser'),  b: slot(7,'loser'),  hora:'21:00', lugar:'Everest', cancha:'2' },
       ],
     },
@@ -165,7 +165,7 @@ export default function FixtureTabs({
       label: 'Avanzada',
       ganadores: [
         { a: slot(9, 'winner'), b: slot(12,'winner'), hora:'19:00', lugar:'Everest', cancha:'1' },
-        { a: slot(10,'winner'), b: slot(11,'winner'), hora:'20:00', lugar:'Everest', cancha:'1' },
+        { a: slot(10,'winner'), b: slot(11,'winner'), hora:'21:00', lugar:'Everest', cancha:'1' },
       ],
       perdedores: [
         { a: slot(9, 'loser'),  b: slot(12,'loser'),  hora:'19:00', lugar:'PLT',     cancha:'3' },
