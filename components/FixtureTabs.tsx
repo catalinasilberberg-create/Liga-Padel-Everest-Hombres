@@ -256,40 +256,42 @@ export default function FixtureTabs({
               <div className="px-4 py-2.5 bg-[#1e3a5f] text-white">
                 <h3 className="font-bold text-sm uppercase tracking-wider">{g.label}</h3>
               </div>
-              <div className="divide-y divide-gray-100">
-                <div className="flex items-stretch">
-                  <div className="flex-1 px-3 py-1 divide-y divide-gray-50">
+              <div className="flex">
+                {/* Partidos */}
+                <div className="flex-1 min-w-0 divide-y divide-gray-100">
+                  <div className="px-3 py-1 divide-y divide-gray-50">
                     {g.ganadores.map((c, i) => (
                       <div key={i} className="flex items-center gap-2 py-1.5">
                         <div className="shrink-0 text-center w-16">
                           <div className="text-xs font-bold text-[#1e3a5f]">{c.hora}</div>
                           <div className="text-[10px] text-gray-400">{c.lugar} C{c.cancha}</div>
                         </div>
-                        <span className="flex-1 text-xs font-medium text-gray-800 truncate">{c.a}</span>
+                        <span className="flex-1 min-w-0 text-xs font-medium text-gray-800 truncate">{c.a}</span>
                         <span className="text-xs text-gray-300 shrink-0">vs</span>
-                        <span className="flex-1 text-xs font-medium text-gray-800 truncate text-right">{c.b}</span>
+                        <span className="flex-1 min-w-0 text-xs font-medium text-gray-800 truncate text-right">{c.b}</span>
                       </div>
                     ))}
                   </div>
-                  <div className="flex items-center justify-center bg-green-600 text-white px-2.5 min-w-[4.5rem]">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-center leading-tight">SEMI<br/>FINALES</span>
-                  </div>
-                </div>
-                <div className="flex items-stretch">
-                  <div className="flex-1 px-3 py-1 divide-y divide-gray-50">
+                  <div className="px-3 py-1 divide-y divide-gray-50">
                     {g.perdedores.map((c, i) => (
                       <div key={i} className="flex items-center gap-2 py-1.5">
                         <div className="shrink-0 text-center w-16">
                           <div className="text-xs font-bold text-[#1e3a5f]">{c.hora}</div>
                           <div className="text-[10px] text-gray-400">{c.lugar} C{c.cancha}</div>
                         </div>
-                        <span className="flex-1 text-xs font-medium text-gray-800 truncate">{c.a}</span>
+                        <span className="flex-1 min-w-0 text-xs font-medium text-gray-800 truncate">{c.a}</span>
                         <span className="text-xs text-gray-300 shrink-0">vs</span>
-                        <span className="flex-1 text-xs font-medium text-gray-800 truncate text-right">{c.b}</span>
+                        <span className="flex-1 min-w-0 text-xs font-medium text-gray-800 truncate text-right">{c.b}</span>
                       </div>
                     ))}
                   </div>
-                  <div className="flex items-center justify-center bg-gray-400 px-2.5 min-w-[4.5rem]">
+                </div>
+                {/* Etiquetas: flex-col flex-1 → siempre 50/50 */}
+                <div className="flex flex-col shrink-0 w-[4.5rem]">
+                  <div className="flex-1 bg-green-600 flex items-center justify-center px-2">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-white text-center leading-tight">SEMI<br/>FINALES</span>
+                  </div>
+                  <div className="flex-1 bg-gray-400 flex items-center justify-center px-2">
                     <span className="text-[10px] font-bold uppercase tracking-wider text-white text-center leading-tight">DEMÁS<br/>LUGARES</span>
                   </div>
                 </div>
