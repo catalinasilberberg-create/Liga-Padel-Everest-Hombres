@@ -300,10 +300,8 @@ export default function FixtureTabs({
           ))}
 
           {/* ── Resultados SF ── */}
-          {GRUPOS.map((g) => {
-            const gPartidos = partidos.filter(
-              (p) => p.fecha_id === sfFechaId && p.pareja1?.grupo === g.key
-            )
+          {sfPartidos && GRUPOS.map((g) => {
+            const gPartidos = sfPartidos.filter((p) => p.pareja1?.grupo === g.key)
             if (gPartidos.length === 0) return null
             const color = getColorGrupo(g.key)
             return (
