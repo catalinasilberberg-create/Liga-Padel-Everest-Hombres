@@ -298,6 +298,32 @@ export default function FixtureTabs({
               </div>
             </div>
           ))}
+
+          {/* ── Resultados SF ── */}
+          {GRUPOS.map((g) => {
+            const gPartidos = partidos.filter(
+              (p) => p.fecha_id === sfFechaId && p.pareja1?.grupo === g.key
+            )
+            if (gPartidos.length === 0) return null
+            const color = getColorGrupo(g.key)
+            return (
+              <div key={g.key}>
+                <div
+                  style={{ borderLeftColor: color.header, backgroundColor: color.bg }}
+                  className="border-l-4 px-3 py-1 rounded-r-lg mb-1.5"
+                >
+                  <span style={{ color: color.header }} className="text-xs font-bold uppercase tracking-wider">
+                    {g.label}
+                  </span>
+                </div>
+                <div className="grid gap-1.5 sm:grid-cols-2">
+                  {gPartidos.map((p) => (
+                    <PartidoCard key={p.id} partido={p} grupo={g.key} />
+                  ))}
+                </div>
+              </div>
+            )
+          })}
         </div>
       ) : esFinal ? (
         /* ── Final proyectada ─────────────────────────────────────────── */
