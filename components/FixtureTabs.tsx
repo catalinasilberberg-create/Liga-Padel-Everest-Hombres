@@ -186,28 +186,28 @@ export default function FixtureTabs({
     {
       label: 'Intermedia',
       bloques: [
-        { titulo: 'Final · 1° / 2° Lugar', a: sfSlot(1,'winner'), b: sfSlot(2,'winner') },
-        { titulo: '3° / 4° Lugar',         a: sfSlot(1,'loser'),  b: sfSlot(2,'loser')  },
-        { titulo: '5° / 6° Lugar',         a: sfSlot(3,'winner'), b: sfSlot(4,'winner') },
-        { titulo: '7° / 8° Lugar',         a: sfSlot(3,'loser'),  b: sfSlot(4,'loser')  },
+        { titulo: 'Final · 1° / 2° Lugar', a: sfSlot(1,'winner'), b: sfSlot(2,'winner'), hora: '19:00', lugar: 'PLT' },
+        { titulo: '3° / 4° Lugar',         a: sfSlot(1,'loser'),  b: sfSlot(2,'loser'),  hora: '19:00', lugar: 'PLT' },
+        { titulo: '5° / 6° Lugar',         a: sfSlot(3,'winner'), b: sfSlot(4,'winner'), hora: '19:00', lugar: 'PLT' },
+        { titulo: '7° / 8° Lugar',         a: sfSlot(3,'loser'),  b: sfSlot(4,'loser'),  hora: '19:00', lugar: 'PLT' },
       ],
     },
     {
       label: 'Intermedia Alta',
       bloques: [
-        { titulo: 'Final · 1° / 2° Lugar', a: sfSlot(5,'winner'), b: sfSlot(6,'winner') },
-        { titulo: '3° / 4° Lugar',         a: sfSlot(5,'loser'),  b: sfSlot(6,'loser')  },
-        { titulo: '5° / 6° Lugar',         a: sfSlot(7,'winner'), b: sfSlot(8,'winner') },
-        { titulo: '7° / 8° Lugar',         a: sfSlot(7,'loser'),  b: sfSlot(8,'loser')  },
+        { titulo: 'Final · 1° / 2° Lugar', a: sfSlot(5,'winner'), b: sfSlot(6,'winner'), hora: '19:00', lugar: 'PLT' },
+        { titulo: '3° / 4° Lugar',         a: sfSlot(5,'loser'),  b: sfSlot(6,'loser'),  hora: '19:00', lugar: 'PLT' },
+        { titulo: '5° / 6° Lugar',         a: sfSlot(7,'winner'), b: sfSlot(8,'winner'), hora: '19:00', lugar: 'PLT' },
+        { titulo: '7° / 8° Lugar',         a: sfSlot(7,'loser'),  b: sfSlot(8,'loser'),  hora: '19:00', lugar: 'PLT' },
       ],
     },
     {
       label: 'Avanzada',
       bloques: [
-        { titulo: 'Final · 1° / 2° Lugar', a: sfSlot(9, 'winner'), b: sfSlot(10,'winner') },
-        { titulo: '3° / 4° Lugar',         a: sfSlot(9, 'loser'),  b: sfSlot(10,'loser')  },
-        { titulo: '5° / 6° Lugar',         a: sfSlot(11,'winner'), b: sfSlot(12,'winner') },
-        { titulo: '7° / 8° Lugar',         a: sfSlot(11,'loser'),  b: sfSlot(12,'loser')  },
+        { titulo: 'Final · 1° / 2° Lugar', a: sfSlot(9, 'winner'), b: sfSlot(10,'winner'), hora: '19:00', lugar: 'PLT' },
+        { titulo: '3° / 4° Lugar',         a: sfSlot(9, 'loser'),  b: sfSlot(10,'loser'),  hora: '19:00', lugar: 'PLT' },
+        { titulo: '5° / 6° Lugar',         a: sfSlot(11,'winner'), b: sfSlot(12,'winner'), hora: '19:00', lugar: 'PLT' },
+        { titulo: '7° / 8° Lugar',         a: sfSlot(11,'loser'),  b: sfSlot(12,'loser'),  hora: '19:00', lugar: 'PLT' },
       ],
     },
   ]
@@ -336,12 +336,16 @@ export default function FixtureTabs({
               </div>
               <div className="divide-y divide-gray-50">
                 {g.bloques.map((b, i) => (
-                  <div key={i} className="px-4 py-2.5">
+                  <div key={i} className="px-3 py-2">
                     <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">{b.titulo}</p>
-                    <div className="flex items-center gap-3 text-sm">
-                      <span className="flex-1 font-medium text-gray-800 truncate">{b.a}</span>
+                    <div className="flex items-center gap-2">
+                      <div className="shrink-0 text-center w-16">
+                        <div className="text-xs font-bold text-[#1e3a5f]">{b.hora}</div>
+                        <div className="text-[10px] text-gray-400">{b.lugar}</div>
+                      </div>
+                      <span className="flex-1 min-w-0 text-xs font-medium text-gray-800 truncate">{b.a}</span>
                       <span className="text-xs text-gray-300 shrink-0">vs</span>
-                      <span className="flex-1 font-medium text-gray-800 truncate text-right">{b.b}</span>
+                      <span className="flex-1 min-w-0 text-xs font-medium text-gray-800 truncate text-right">{b.b}</span>
                     </div>
                   </div>
                 ))}
