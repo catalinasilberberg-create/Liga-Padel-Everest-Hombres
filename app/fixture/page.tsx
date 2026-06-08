@@ -10,7 +10,7 @@ export default async function FixturePage() {
     getPartidos(),
   ])
 
-  const fechas = [...todasFechas].reverse()
+  const fechas = [...todasFechas].sort((a, b) => new Date(b.fecha).getTime() - new Date(a.fecha).getTime())
   const proximaId = proxima?.id ?? fechas[0]?.id ?? null
 
   const [qfPartidos, sfPartidos] = await Promise.all([
