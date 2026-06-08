@@ -353,30 +353,67 @@ export default function FixtureTabs({
         </div>
       ) : (
         /* ── Partidos normales ────────────────────────────────────────── */
-        <div>
-          {GRUPOS.map((g) => {
-            const gPartidos = partidosFecha.filter((p) => p.pareja1?.grupo === g.key)
-            if (gPartidos.length === 0) return null
-            const color = getColorGrupo(g.key)
-            return (
-              <div key={g.key} className="mb-4">
-                <div
-                  style={{ borderLeftColor: color.header, backgroundColor: color.bg }}
-                  className="border-l-4 px-3 py-1 rounded-r-lg mb-1.5"
-                >
-                  <span style={{ color: color.header }} className="text-xs font-bold uppercase tracking-wider">
-                    {g.label}
-                  </span>
-                </div>
-                <div className="grid gap-1.5 sm:grid-cols-2">
-                  {gPartidos.map((p) => (
-                    <PartidoCard key={p.id} partido={p} grupo={g.key} numeroPartido={getNumeroPartido(p)} />
-                  ))}
-                </div>
-              </div>
-            )
-          })}
-        </div>
+        (() => {
+          // Detecta qué partidos de esta fecha son SF pendientes (mismo cruce que SF sin jugar)
+          const sfPendingIds = new Set(
+            sfPartidos
+              ? partidosFecha
+                  .filter((p) =>
+                    sfPartidos.some(
+                      (sf) =>
+                        !sf.jugado &&
+                        ((sf.pareja1_id === p.pareja1_id && sf.pareja2_id === p.pareja2_id) ||
+                         (sf.pareja1_id === p.pareja2_id && sf.pareja2_id === p.pareja1_id))
+                    )
+                  )
+                  .map((p) => p.id)
+              : []
+          )
+          return (
+            <div>
+              {GRUPOS.map((g) => {
+                const gPartidos = partidosFecha.filter((p) => p.pareja1?.grupo === g.key)
+                if (gPartidos.length === 0) return null
+                const color = getColorGrupo(g.key)
+                const regular   = gPartidos.filter((p) => !sfPendingIds.has(p.id))
+                const sfPending = gPartidos.filter((p) =>  sfPendingIds.has(p.id))
+                return (
+                  <div key={g.key} className="mb-4">
+                    <div
+                      style={{ borderLeftColor: color.header, backgroundColor: color.bg }}
+                      className="border-l-4 px-3 py-1 rounded-r-lg mb-1.5"
+                    >
+                      <span style={{ color: color.header }} className="text-xs font-bold uppercase tracking-wider">
+                        {g.label}
+                      </span>
+                    </div>
+                    {regular.length > 0 && (
+                      <div className="grid gap-1.5 sm:grid-cols-2 mb-1.5">
+                        {regular.map((p) => (
+                          <PartidoCard key={p.id} partido={p} grupo={g.key} numeroPartido={getNumeroPartido(p)} />
+                        ))}
+                      </div>
+                    )}
+                    {sfPending.length > 0 && (
+                      <>
+                        <div className="border-l-4 border-amber-500 bg-amber-50 px-3 py-1 rounded-r-lg mb-1.5 mt-1">
+                          <span className="text-xs font-bold uppercase tracking-wider text-amber-600">
+                            Semifinal Pendiente
+                          </span>
+                        </div>
+                        <div className="grid gap-1.5 sm:grid-cols-2">
+                          {sfPending.map((p) => (
+                            <PartidoCard key={p.id} partido={p} grupo={g.key} />
+                          ))}
+                        </div>
+                      </>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+          )
+        })()
       )}
     </div>
   )
