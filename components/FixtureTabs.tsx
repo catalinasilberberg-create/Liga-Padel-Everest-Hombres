@@ -328,9 +328,9 @@ export default function FixtureTabs({
         <div className="space-y-4">
           <p className="text-xs text-gray-400">Se actualiza según resultados de semifinales</p>
           {finalBracket.map((g) => {
-            // Si hay partidos reales en esta fecha para este grupo, mostrar tarjetas
+            // Solo IA muestra tarjetas reales si tiene partidos en esta fecha
             const grupoKey = GRUPOS.find((gr) => gr.label === g.label)?.key
-            const reales = grupoKey ? partidosFecha.filter((p) => p.pareja1?.grupo === grupoKey) : []
+            const reales = grupoKey === 'intermedia_alta' ? partidosFecha.filter((p) => p.pareja1?.grupo === grupoKey) : []
             if (reales.length > 0) {
               const color = getColorGrupo(grupoKey!)
               return (
