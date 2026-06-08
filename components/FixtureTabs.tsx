@@ -108,6 +108,16 @@ const GRUPOS: { key: Grupo; label: string }[] = [
   { key: 'avanzada',        label: 'Avanzada' },
 ]
 
+// Etiquetas especiales para partidos puntuales (amistoso 09.06)
+const PARTIDO_NOTAS: Record<number, string> = {
+  265: 'Amistoso',
+  266: 'Amistoso',
+  269: 'Final',
+  270: '3° / 4° Lugar',
+  271: '5° / 6° Lugar',
+  272: '7° / 8° Lugar',
+}
+
 interface Props {
   fechas: Fecha[]
   partidos: Partido[]
@@ -401,7 +411,9 @@ export default function FixtureTabs({
                 const gPartidos = partidosFecha.filter((p) => p.pareja1?.grupo === g.key)
                 if (gPartidos.length === 0) return null
                 const color = getColorGrupo(g.key)
-                const regular   = gPartidos.filter((p) => !sfPendingIds.has(p.id))
+                const regular   = gPartidos.filter((p) => !sfPendingIds.has(p.id) && !PARTIDO_NOTAS[p.id])
+                const labeled   = gPartidos.filter((p) => !sfPendingIds.has(p.id) && PARTIDO_NOTAS[p.id] && PARTIDO_NOTAS[p.id] !== 'Amistoso')
+                const amistoso  = gPartidos.filter((p) => !sfPendingIds.has(p.id) && PARTIDO_NOTAS[p.id] === 'Amistoso')
                 const sfPending = gPartidos.filter((p) =>  sfPendingIds.has(p.id))
                 return (
                   <div key={g.key} className="mb-4">
@@ -419,6 +431,27 @@ export default function FixtureTabs({
                           <PartidoCard key={p.id} partido={p} grupo={g.key} numeroPartido={getNumeroPartido(p)} />
                         ))}
                       </div>
+                    )}
+                    {labeled.length > 0 && (
+                      <div className="grid gap-1.5 sm:grid-cols-2 mb-1.5">
+                        {labeled.map((p) => (
+                          <PartidoCard key={p.id} partido={p} grupo={g.key} nota={PARTIDO_NOTAS[p.id]} />
+                        ))}
+                      </div>
+                    )}
+                    {amistoso.length > 0 && (
+                      <>
+                        <div className="border-l-4 border-amber-500 bg-amber-50 px-3 py-1 rounded-r-lg mb-1.5 mt-1">
+                          <span className="text-xs font-bold uppercase tracking-wider text-amber-600">
+                            Amistoso
+                          </span>
+                        </div>
+                        <div className="grid gap-1.5 sm:grid-cols-2 mb-1.5">
+                          {amistoso.map((p) => (
+                            <PartidoCard key={p.id} partido={p} grupo={g.key} nota="Amistoso" />
+                          ))}
+                        </div>
+                      </>
                     )}
                     {sfPending.length > 0 && (
                       <>
