@@ -110,8 +110,8 @@ const GRUPOS: { key: Grupo; label: string }[] = [
 
 // Etiquetas especiales para partidos puntuales (amistoso 09.06)
 const PARTIDO_NOTAS: Record<number, string> = {
-  265: 'Amistoso',
-  266: 'Amistoso',
+  265: 'Final · 1° / 2° Lugar',
+  266: '3° / 4° Lugar',
   269: 'Final',
   270: '3° / 4° Lugar',
   271: '5° / 6° Lugar',
@@ -121,11 +121,12 @@ const PARTIDO_NOTAS: Record<number, string> = {
 }
 
 const NOTA_ORDEN: Record<string, number> = {
-  'Final': 0,
-  '3° / 4° Lugar': 1,
-  '5° / 6° Lugar': 2,
-  '7° / 8° Lugar': 3,
-  'Amistoso': 4,
+  'Final · 1° / 2° Lugar': 0,
+  'Final': 1,
+  '3° / 4° Lugar': 2,
+  '5° / 6° Lugar': 3,
+  '7° / 8° Lugar': 4,
+  'Amistoso': 5,
 }
 
 interface Props {
