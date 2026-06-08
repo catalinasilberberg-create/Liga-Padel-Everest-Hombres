@@ -327,29 +327,55 @@ export default function FixtureTabs({
         /* ── Final proyectada ─────────────────────────────────────────── */
         <div className="space-y-4">
           <p className="text-xs text-gray-400">Se actualiza según resultados de semifinales</p>
-          {finalBracket.map((g) => (
-            <div key={g.label} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-              <div className="px-4 py-2.5 bg-[#1e3a5f] text-white">
-                <h3 className="font-bold text-sm uppercase tracking-wider">{g.label}</h3>
-              </div>
-              <div className="divide-y divide-gray-50">
-                {g.bloques.map((b, i) => (
-                  <div key={i} className="px-3 py-2">
-                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">{b.titulo}</p>
-                    <div className="flex items-center gap-2">
-                      <div className="shrink-0 text-center w-16">
-                        <div className="text-xs font-bold text-[#1e3a5f]">{b.hora}</div>
-                        <div className="text-[10px] text-gray-400">{b.lugar}</div>
-                      </div>
-                      <span className="flex-1 min-w-0 text-xs font-medium text-gray-800 truncate">{b.a}</span>
-                      <span className="text-xs text-gray-300 shrink-0">vs</span>
-                      <span className="flex-1 min-w-0 text-xs font-medium text-gray-800 truncate text-right">{b.b}</span>
-                    </div>
+          {finalBracket.map((g) => {
+            // Si hay partidos reales en esta fecha para este grupo, mostrar tarjetas
+            const grupoKey = GRUPOS.find((gr) => gr.label === g.label)?.key
+            const reales = grupoKey ? partidosFecha.filter((p) => p.pareja1?.grupo === grupoKey) : []
+            if (reales.length > 0) {
+              const color = getColorGrupo(grupoKey!)
+              return (
+                <div key={g.label}>
+                  <div
+                    style={{ borderLeftColor: color.header, backgroundColor: color.bg }}
+                    className="border-l-4 px-3 py-1 rounded-r-lg mb-1.5"
+                  >
+                    <span style={{ color: color.header }} className="text-xs font-bold uppercase tracking-wider">
+                      {g.label}
+                    </span>
                   </div>
-                ))}
+                  <div className="grid gap-1.5 sm:grid-cols-2">
+                    {reales.map((p) => (
+                      <PartidoCard key={p.id} partido={p} grupo={grupoKey} />
+                    ))}
+                  </div>
+                </div>
+              )
+            }
+            // Si no hay partidos reales, mostrar bracket dinámico
+            return (
+              <div key={g.label} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                <div className="px-4 py-2.5 bg-[#1e3a5f] text-white">
+                  <h3 className="font-bold text-sm uppercase tracking-wider">{g.label}</h3>
+                </div>
+                <div className="divide-y divide-gray-50">
+                  {g.bloques.map((b, i) => (
+                    <div key={i} className="px-3 py-2">
+                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">{b.titulo}</p>
+                      <div className="flex items-center gap-2">
+                        <div className="shrink-0 text-center w-16">
+                          <div className="text-xs font-bold text-[#1e3a5f]">{b.hora}</div>
+                          <div className="text-[10px] text-gray-400">{b.lugar}</div>
+                        </div>
+                        <span className="flex-1 min-w-0 text-xs font-medium text-gray-800 truncate">{b.a}</span>
+                        <span className="text-xs text-gray-300 shrink-0">vs</span>
+                        <span className="flex-1 min-w-0 text-xs font-medium text-gray-800 truncate text-right">{b.b}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       ) : (
         /* ── Partidos normales ────────────────────────────────────────── */
