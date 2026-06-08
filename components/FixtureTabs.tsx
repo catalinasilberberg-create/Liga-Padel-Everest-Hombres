@@ -118,6 +118,14 @@ const PARTIDO_NOTAS: Record<number, string> = {
   272: '7° / 8° Lugar',
 }
 
+const NOTA_ORDEN: Record<string, number> = {
+  'Final': 0,
+  '3° / 4° Lugar': 1,
+  '5° / 6° Lugar': 2,
+  '7° / 8° Lugar': 3,
+  'Amistoso': 4,
+}
+
 interface Props {
   fechas: Fecha[]
   partidos: Partido[]
@@ -412,7 +420,9 @@ export default function FixtureTabs({
                 if (gPartidos.length === 0) return null
                 const color = getColorGrupo(g.key)
                 const regular   = gPartidos.filter((p) => !sfPendingIds.has(p.id) && !PARTIDO_NOTAS[p.id])
-                const labeled   = gPartidos.filter((p) => !sfPendingIds.has(p.id) && PARTIDO_NOTAS[p.id] && PARTIDO_NOTAS[p.id] !== 'Amistoso')
+                const labeled   = gPartidos
+                  .filter((p) => !sfPendingIds.has(p.id) && PARTIDO_NOTAS[p.id] && PARTIDO_NOTAS[p.id] !== 'Amistoso')
+                  .sort((a, b) => (NOTA_ORDEN[PARTIDO_NOTAS[a.id]] ?? 99) - (NOTA_ORDEN[PARTIDO_NOTAS[b.id]] ?? 99))
                 const amistoso  = gPartidos.filter((p) => !sfPendingIds.has(p.id) && PARTIDO_NOTAS[p.id] === 'Amistoso')
                 const sfPending = gPartidos.filter((p) =>  sfPendingIds.has(p.id))
                 return (
