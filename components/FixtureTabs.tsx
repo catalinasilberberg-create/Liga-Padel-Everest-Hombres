@@ -116,6 +116,8 @@ const PARTIDO_NOTAS: Record<number, string> = {
   270: '3° / 4° Lugar',
   271: '5° / 6° Lugar',
   272: '7° / 8° Lugar',
+  273: 'Amistoso',
+  274: 'Amistoso',
 }
 
 const NOTA_ORDEN: Record<string, number> = {
