@@ -403,7 +403,7 @@ export default function FixtureTabs({
                         </div>
                         <div className="grid gap-1.5 sm:grid-cols-2">
                           {sfPending.map((p) => (
-                            <PartidoCard key={p.id} partido={p} grupo={g.key} />
+                            <PartidoCard key={p.id} partido={p} grupo={g.key} nota="Semifinal Pendiente" />
                           ))}
                         </div>
                       </>
