@@ -365,21 +365,20 @@ export default function FixtureTabs({
       ) : esFinal ? (
         /* ── Final proyectada ─────────────────────────────────────────── */
         (() => {
-          // Construir set de pares de parejas ya cubiertos por el bracket dinámico
+          // Construir set de pares cubiertos por el bracket de finales
+          // Las finales enfrentan: ganador SF_a vs ganador SF_b, y perdedor SF_a vs perdedor SF_b
           const bracketPairs = new Set<string>()
+          const addPair = (a: number, b: number) =>
+            bracketPairs.add([Math.min(a, b), Math.max(a, b)].join('-'))
           if (sfPartidos && qfPartidos) {
-            for (let n = 1; n <= 12; n++) {
-              const pairing = buildSFPairing(qfPartidos, n)
-              if (!pairing) continue
-              const r = getSFWinnerLoserId(sfPartidos, n, qfPartidos)
-              if (!r) continue
-              // Final: winner vs next winner; 3°/4°: loser vs next loser
-              // Se registran todos los posibles pares que el bracket resuelve
-              const key1 = [Math.min(r.winner, r.loser), Math.max(r.winner, r.loser)].join('-')
-              bracketPairs.add(key1)
-              // también el pairing del SF en sí
-              const key2 = [Math.min(pairing.p1, pairing.p2), Math.max(pairing.p1, pairing.p2)].join('-')
-              bracketPairs.add(key2)
+            const sfPairGroups = [[1,2],[3,4],[5,6],[7,8],[9,10],[11,12]]
+            for (const [na, nb] of sfPairGroups) {
+              const rA = getSFWinnerLoserId(sfPartidos, na, qfPartidos)
+              const rB = getSFWinnerLoserId(sfPartidos, nb, qfPartidos)
+              if (rA && rB) {
+                addPair(rA.winner, rB.winner) // Final
+                addPair(rA.loser,  rB.loser)  // 3°/4°
+              }
             }
           }
           const isInBracket = (p: Partido) => {
