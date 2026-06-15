@@ -1,16 +1,12 @@
-import { supabase } from '@/lib/supabase'
+import { getPartidos } from '@/lib/data'
 import { calcularPuntos } from '@/lib/calculos'
 import { Partido } from '@/lib/types'
 
 export const revalidate = 0
 
 async function getPartido(id: number): Promise<Partido | null> {
-  const { data } = await supabase
-    .from('partidos')
-    .select('*, pareja1:parejas!pareja1_id(*), pareja2:parejas!pareja2_id(*)')
-    .eq('id', id)
-    .single()
-  return data ?? null
+  const todos = await getPartidos()
+  return todos.find((p) => p.id === id) ?? null
 }
 
 function resolverGanadorPerdedor(p: Partido): { ganador: string; perdedor: string } | null {
