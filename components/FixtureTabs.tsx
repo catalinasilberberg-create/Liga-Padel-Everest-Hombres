@@ -137,16 +137,17 @@ const PARTIDO_NOTAS: Record<number, string> = {
   273: 'Amistoso',
   274: 'Amistoso',
   // Intermedia 16.06
-  288: 'Final · 1° / 2° Lugar',
-  287: '3° / 4° Lugar',
-  286: '5° / 6° Lugar',
-  285: '7° / 8° Lugar',
+  288: 'Amistoso',
+  285: '3° / 4° Lugar',
+  286: 'Resto Lugares',
+  287: 'Resto Lugares',
 }
 
 const NOTA_ORDEN: Record<string, number> = {
   'Final · 1° / 2° Lugar': 0,
   'Final': 1,
   '3° / 4° Lugar': 2,
+  'Resto Lugares': 3,
   '5° / 6° Lugar': 3,
   '7° / 8° Lugar': 4,
   'Amistoso': 5,
@@ -512,8 +513,9 @@ export default function FixtureTabs({
                 const color = getColorGrupo(g.key)
                 const regular   = gPartidos.filter((p) => !sfPendingIds.has(p.id) && !PARTIDO_NOTAS[p.id])
                 const labeled   = gPartidos
-                  .filter((p) => !sfPendingIds.has(p.id) && PARTIDO_NOTAS[p.id] && PARTIDO_NOTAS[p.id] !== 'Amistoso')
+                  .filter((p) => !sfPendingIds.has(p.id) && PARTIDO_NOTAS[p.id] && PARTIDO_NOTAS[p.id] !== 'Amistoso' && PARTIDO_NOTAS[p.id] !== 'Resto Lugares')
                   .sort((a, b) => (NOTA_ORDEN[PARTIDO_NOTAS[a.id]] ?? 99) - (NOTA_ORDEN[PARTIDO_NOTAS[b.id]] ?? 99))
+                const restoLugares = gPartidos.filter((p) => !sfPendingIds.has(p.id) && PARTIDO_NOTAS[p.id] === 'Resto Lugares')
                 const amistoso  = gPartidos.filter((p) => !sfPendingIds.has(p.id) && PARTIDO_NOTAS[p.id] === 'Amistoso')
                 const sfPending = gPartidos.filter((p) =>  sfPendingIds.has(p.id))
                 return (
@@ -539,6 +541,20 @@ export default function FixtureTabs({
                           <PartidoCard key={p.id} partido={p} grupo={g.key} nota={PARTIDO_NOTAS[p.id]} />
                         ))}
                       </div>
+                    )}
+                    {restoLugares.length > 0 && (
+                      <>
+                        <div className="border-l-4 border-gray-400 bg-gray-50 px-3 py-1 rounded-r-lg mb-1.5 mt-1">
+                          <span className="text-xs font-bold uppercase tracking-wider text-gray-500">
+                            Resto Lugares
+                          </span>
+                        </div>
+                        <div className="grid gap-1.5 sm:grid-cols-2 mb-1.5">
+                          {restoLugares.map((p) => (
+                            <PartidoCard key={p.id} partido={p} grupo={g.key} />
+                          ))}
+                        </div>
+                      </>
                     )}
                     {amistoso.length > 0 && (
                       <>
