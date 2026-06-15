@@ -141,6 +141,8 @@ const PARTIDO_NOTAS: Record<number, string> = {
   282: '3° / 4° Lugar',
   283: '5° / 6° Lugar',
   284: '7° / 8° Lugar',
+  // Avanzada 16.06
+  290: '3° / 4° Lugar',
   // Intermedia 16.06
   288: 'Amistoso',
   285: '3° / 4° Lugar',
@@ -241,10 +243,11 @@ export default function FixtureTabs({
 
   const findRealPartido = (idA: number | null, idB: number | null): Partido | null => {
     if (!idA || !idB) return null
-    return partidosFecha.find(p =>
+    const matches = partidosFecha.filter(p =>
       (p.pareja1_id === idA && p.pareja2_id === idB) ||
       (p.pareja1_id === idB && p.pareja2_id === idA)
-    ) ?? null
+    )
+    return matches.find(p => p.jugado) ?? matches[0] ?? null
   }
 
   const finalBracket = [
@@ -269,10 +272,10 @@ export default function FixtureTabs({
     {
       label: 'Avanzada',
       bloques: [
-        { titulo: 'Final · 1° / 2° Lugar', a: sfSlot(9, 'winner'), b: sfSlot(10,'winner'), idA: sfSlotId(9,'winner'),  idB: sfSlotId(10,'winner') },
-        { titulo: '3° / 4° Lugar',         a: sfSlot(9, 'loser'),  b: sfSlot(10,'loser'),  idA: sfSlotId(9,'loser'),   idB: sfSlotId(10,'loser')  },
-        { titulo: '5° / 6° Lugar',         a: sfSlot(11,'winner'), b: sfSlot(12,'winner'), idA: sfSlotId(11,'winner'), idB: sfSlotId(12,'winner') },
-        { titulo: '7° / 8° Lugar',         a: sfSlot(11,'loser'),  b: sfSlot(12,'loser'),  idA: sfSlotId(11,'loser'),  idB: sfSlotId(12,'loser')  },
+        { titulo: 'Final · 1° / 2° Lugar', a: sfSlot(9, 'winner'), b: sfSlot(10,'winner'), idA: sfSlotId(9,'winner'),  idB: sfSlotId(10,'winner'), hora: null,    lugar: null,      cancha: null },
+        { titulo: '3° / 4° Lugar',         a: sfSlot(9, 'loser'),  b: sfSlot(10,'loser'),  idA: sfSlotId(9,'loser'),   idB: sfSlotId(10,'loser'),  hora: null,    lugar: null,      cancha: null },
+        { titulo: '5° / 6° Lugar',         a: sfSlot(11,'winner'), b: sfSlot(12,'winner'), idA: sfSlotId(11,'winner'), idB: sfSlotId(12,'winner'), hora: '21:00', lugar: 'Everest', cancha: '1'  },
+        { titulo: '7° / 8° Lugar',         a: sfSlot(11,'loser'),  b: sfSlot(12,'loser'),  idA: sfSlotId(11,'loser'),  idB: sfSlotId(12,'loser'),  hora: '20:00', lugar: 'PLT',     cancha: '2'  },
       ],
     },
   ]
@@ -394,23 +397,23 @@ export default function FixtureTabs({
           // Construir set de pares cubiertos por el bracket de finales
           // Las finales enfrentan: ganador SF_a vs ganador SF_b, y perdedor SF_a vs perdedor SF_b
           const bracketPairs = new Set<string>()
-          const addPair = (a: number, b: number) =>
-            bracketPairs.add([Math.min(a, b), Math.max(a, b)].join('-'))
+          const bracketPartidoIds = new Set<number>()
           if (sfPartidos && qfPartidos) {
             const sfPairGroups = [[1,2],[3,4],[5,6],[7,8],[9,10],[11,12]]
             for (const [na, nb] of sfPairGroups) {
               const rA = getSFWinnerLoserId(sfPartidos, na, qfPartidos)
               const rB = getSFWinnerLoserId(sfPartidos, nb, qfPartidos)
               if (rA && rB) {
-                addPair(rA.winner, rB.winner) // Final
-                addPair(rA.loser,  rB.loser)  // 3°/4°
+                bracketPairs.add([Math.min(rA.winner,rB.winner),Math.max(rA.winner,rB.winner)].join('-'))
+                bracketPairs.add([Math.min(rA.loser, rB.loser), Math.max(rA.loser, rB.loser)].join('-'))
+                const wP = findRealPartido(rA.winner, rB.winner)
+                const lP = findRealPartido(rA.loser,  rB.loser)
+                if (wP) bracketPartidoIds.add(wP.id)
+                if (lP) bracketPartidoIds.add(lP.id)
               }
             }
           }
-          const isInBracket = (p: Partido) => {
-            const key = [Math.min(p.pareja1_id, p.pareja2_id), Math.max(p.pareja1_id, p.pareja2_id)].join('-')
-            return bracketPairs.has(key)
-          }
+          const isInBracket = (p: Partido) => bracketPartidoIds.has(p.id)
           return (
         <div className="space-y-4">
           <p className="text-xs text-gray-400">Se actualiza según resultados de semifinales</p>
@@ -461,8 +464,8 @@ export default function FixtureTabs({
                         <div key={i} className="px-3 py-2">
                           <div className="flex items-center justify-between mb-1">
                             <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">{b.titulo}</p>
-                            {rp?.hora && (
-                              <span className="text-[10px] font-semibold text-[#1e3a5f]">{rp.hora} · {rp.lugar} C{rp.cancha}</span>
+                            {(b.hora || rp?.hora) && (
+                              <span className="text-[10px] font-semibold text-[#1e3a5f]">{b.hora ?? rp?.hora} · {b.lugar ?? rp?.lugar} C{b.cancha ?? rp?.cancha}</span>
                             )}
                           </div>
                           <div className="flex items-center gap-2">
@@ -486,9 +489,11 @@ export default function FixtureTabs({
                 </div>
                 {reales.filter((p) => !isInBracket(p)).length > 0 && grupoKey && (
                   <div className="mt-1.5 grid gap-1.5 sm:grid-cols-2">
-                    {reales.filter((p) => !isInBracket(p)).map((p) => (
-                      <PartidoCard key={p.id} partido={p} grupo={grupoKey} />
-                    ))}
+                    {reales.filter((p) => !isInBracket(p)).map((p) => {
+                      const pKey = [Math.min(p.pareja1_id,p.pareja2_id),Math.max(p.pareja1_id,p.pareja2_id)].join('-')
+                      const nota = PARTIDO_NOTAS[p.id] ?? (bracketPairs.has(pKey) ? 'Amistoso' : undefined)
+                      return <PartidoCard key={p.id} partido={p} grupo={grupoKey} nota={nota} />
+                    })}
                   </div>
                 )}
               </div>
