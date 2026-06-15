@@ -136,6 +136,11 @@ const PARTIDO_NOTAS: Record<number, string> = {
   272: '7° / 8° Lugar',
   273: 'Amistoso',
   274: 'Amistoso',
+  // Intermedia 16.06
+  288: 'Final · 1° / 2° Lugar',
+  287: '3° / 4° Lugar',
+  286: '5° / 6° Lugar',
+  285: '7° / 8° Lugar',
 }
 
 const NOTA_ORDEN: Record<string, number> = {
@@ -421,9 +426,11 @@ export default function FixtureTabs({
                     </span>
                   </div>
                   <div className="grid gap-1.5 sm:grid-cols-2">
-                    {reales.map((p) => (
-                      <PartidoCard key={p.id} partido={p} grupo={grupoKey} />
-                    ))}
+                    {[...reales]
+                      .sort((a, b) => (NOTA_ORDEN[PARTIDO_NOTAS[a.id]] ?? 99) - (NOTA_ORDEN[PARTIDO_NOTAS[b.id]] ?? 99))
+                      .map((p) => (
+                        <PartidoCard key={p.id} partido={p} grupo={grupoKey} nota={PARTIDO_NOTAS[p.id]} />
+                      ))}
                   </div>
                 </div>
               )
