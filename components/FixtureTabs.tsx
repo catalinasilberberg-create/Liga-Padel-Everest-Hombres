@@ -274,7 +274,7 @@ export default function FixtureTabs({
         { titulo: 'Final · 1° / 2° Lugar', a: sfSlot(9, 'winner'), b: sfSlot(10,'winner'), idA: sfSlotId(9,'winner'),  idB: sfSlotId(10,'winner'), hora: null,    lugar: null,      cancha: null },
         { titulo: '3° / 4° Lugar',         a: sfSlot(9, 'loser'),  b: sfSlot(10,'loser'),  idA: sfSlotId(9,'loser'),   idB: sfSlotId(10,'loser'),  hora: null,    lugar: null,      cancha: null },
         { titulo: '5° / 6° Lugar',         a: sfSlot(11,'winner'), b: sfSlot(12,'winner'), idA: sfSlotId(11,'winner'), idB: sfSlotId(12,'winner'), hora: '21:00', lugar: 'Everest', cancha: '1'  },
-        { titulo: '7° / 8° Lugar',         a: sfSlot(11,'loser'),  b: sfSlot(12,'loser'),  idA: sfSlotId(11,'loser'),  idB: sfSlotId(12,'loser'),  hora: '20:00', lugar: 'PLT',     cancha: '2'  },
+        { titulo: '7° / 8° Lugar',         a: sfSlot(11,'loser'),  b: sfSlot(12,'loser'),  idA: sfSlotId(11,'loser'),  idB: sfSlotId(12,'loser'),  hora: '20:00', lugar: 'PLT',     cancha: '3'  },
       ],
     },
   ]
