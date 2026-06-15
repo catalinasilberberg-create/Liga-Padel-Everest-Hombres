@@ -13,6 +13,14 @@ const links = [
   { href: '/honor', label: 'Honor', icon: '🎖️' },
 ]
 
+const mobileLinks = [
+  { href: '/', label: 'Inicio', icon: '🏠' },
+  { href: '/posiciones', label: 'Posiciones', icon: '🏆' },
+  { href: '/fixture', label: 'Fixture', icon: '📅' },
+  { href: '/resultados', label: 'Resultados', icon: '📊' },
+  { href: '/honor', label: 'Honor', icon: '🎖️' },
+]
+
 export default function Navbar() {
   const pathname = usePathname()
 
@@ -50,7 +58,7 @@ export default function Navbar() {
 
       {/* Bottom nav - mobile */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-[#1a3a5c] text-white flex border-t border-blue-700 z-50">
-        {links.map((l) => (
+        {mobileLinks.map((l) => (
           <Link
             key={l.href}
             href={l.href}
