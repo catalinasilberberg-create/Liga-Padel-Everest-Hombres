@@ -94,11 +94,16 @@ export default async function PosicionesPage() {
     getPartidos(12),
   ])
 
+  // Solo temporada regular (fecha_ids 1-7 = fechas 4ª a 10ª)
+  const FECHAS_REGULARES = new Set([1, 2, 3, 4, 5, 6, 7])
+
   const tablas = await Promise.all(
     GRUPOS.map(async (g) => {
       const parejas = await getParejas(g.key)
       const partidos = todosPartidos.filter(
-        (p) => p.pareja1?.grupo === g.key || p.pareja2?.grupo === g.key
+        (p) =>
+          FECHAS_REGULARES.has(p.fecha_id) &&
+          (p.pareja1?.grupo === g.key || p.pareja2?.grupo === g.key)
       )
       return { ...g, posiciones: calcularPosiciones(parejas, partidos) }
     })
