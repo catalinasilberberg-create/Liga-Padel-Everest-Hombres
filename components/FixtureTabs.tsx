@@ -459,7 +459,12 @@ export default function FixtureTabs({
                       )
                       return (
                         <div key={i} className="px-3 py-2">
-                          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">{b.titulo}</p>
+                          <div className="flex items-center justify-between mb-1">
+                            <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">{b.titulo}</p>
+                            {rp?.hora && (
+                              <span className="text-[10px] font-semibold text-[#1e3a5f]">{rp.hora} · {rp.lugar} C{rp.cancha}</span>
+                            )}
+                          </div>
                           <div className="flex items-center gap-2">
                             <span className={`flex-1 min-w-0 text-xs truncate ${jugado && ganadorA ? 'font-bold text-gray-900' : 'font-medium text-gray-600'}`}>{b.a}</span>
                             {jugado && rp ? (
