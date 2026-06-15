@@ -144,17 +144,16 @@ const PARTIDO_NOTAS: Record<number, string> = {
   // Avanzada 16.06
   290: '3° / 4° Lugar',
   // Intermedia 16.06
-  288: 'Amistoso',
   285: '3° / 4° Lugar',
-  286: 'Resto Lugares',
-  287: 'Resto Lugares',
+  286: 'Amistoso',
+  287: 'Amistoso',
+  288: 'Amistoso',
 }
 
 const NOTA_ORDEN: Record<string, number> = {
   'Final · 1° / 2° Lugar': 0,
   'Final': 1,
   '3° / 4° Lugar': 2,
-  'Resto Lugares': 3,
   '5° / 6° Lugar': 3,
   '7° / 8° Lugar': 4,
   'Amistoso': 5,
