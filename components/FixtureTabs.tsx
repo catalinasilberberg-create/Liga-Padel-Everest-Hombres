@@ -253,19 +253,19 @@ export default function FixtureTabs({
     {
       label: 'Intermedia',
       bloques: [
-        { titulo: 'Final · 1° / 2° Lugar', a: sfSlot(1,'winner'), b: sfSlot(2,'winner'), idA: sfSlotId(1,'winner'), idB: sfSlotId(2,'winner') },
-        { titulo: '3° / 4° Lugar',         a: sfSlot(1,'loser'),  b: sfSlot(2,'loser'),  idA: sfSlotId(1,'loser'),  idB: sfSlotId(2,'loser')  },
-        { titulo: '5° / 6° Lugar',         a: sfSlot(3,'winner'), b: sfSlot(4,'winner'), idA: sfSlotId(3,'winner'), idB: sfSlotId(4,'winner') },
-        { titulo: '7° / 8° Lugar',         a: sfSlot(3,'loser'),  b: sfSlot(4,'loser'),  idA: sfSlotId(3,'loser'),  idB: sfSlotId(4,'loser')  },
+        { titulo: 'Final · 1° / 2° Lugar', a: sfSlot(1,'winner'), b: sfSlot(2,'winner'), idA: sfSlotId(1,'winner'), idB: sfSlotId(2,'winner'), hora: null, lugar: null, cancha: null },
+        { titulo: '3° / 4° Lugar',         a: sfSlot(1,'loser'),  b: sfSlot(2,'loser'),  idA: sfSlotId(1,'loser'),  idB: sfSlotId(2,'loser'),  hora: null, lugar: null, cancha: null },
+        { titulo: '5° / 6° Lugar',         a: sfSlot(3,'winner'), b: sfSlot(4,'winner'), idA: sfSlotId(3,'winner'), idB: sfSlotId(4,'winner'), hora: null, lugar: null, cancha: null },
+        { titulo: '7° / 8° Lugar',         a: sfSlot(3,'loser'),  b: sfSlot(4,'loser'),  idA: sfSlotId(3,'loser'),  idB: sfSlotId(4,'loser'),  hora: null, lugar: null, cancha: null },
       ],
     },
     {
       label: 'Intermedia Alta',
       bloques: [
-        { titulo: 'Final · 1° / 2° Lugar', a: sfSlot(5,'winner'), b: sfSlot(6,'winner'), idA: sfSlotId(5,'winner'), idB: sfSlotId(6,'winner') },
-        { titulo: '3° / 4° Lugar',         a: sfSlot(5,'loser'),  b: sfSlot(6,'loser'),  idA: sfSlotId(5,'loser'),  idB: sfSlotId(6,'loser')  },
-        { titulo: '5° / 6° Lugar',         a: sfSlot(7,'winner'), b: sfSlot(8,'winner'), idA: sfSlotId(7,'winner'), idB: sfSlotId(8,'winner') },
-        { titulo: '7° / 8° Lugar',         a: sfSlot(7,'loser'),  b: sfSlot(8,'loser'),  idA: sfSlotId(7,'loser'),  idB: sfSlotId(8,'loser')  },
+        { titulo: 'Final · 1° / 2° Lugar', a: sfSlot(5,'winner'), b: sfSlot(6,'winner'), idA: sfSlotId(5,'winner'), idB: sfSlotId(6,'winner'), hora: null, lugar: null, cancha: null },
+        { titulo: '3° / 4° Lugar',         a: sfSlot(5,'loser'),  b: sfSlot(6,'loser'),  idA: sfSlotId(5,'loser'),  idB: sfSlotId(6,'loser'),  hora: null, lugar: null, cancha: null },
+        { titulo: '5° / 6° Lugar',         a: sfSlot(7,'winner'), b: sfSlot(8,'winner'), idA: sfSlotId(7,'winner'), idB: sfSlotId(8,'winner'), hora: null, lugar: null, cancha: null },
+        { titulo: '7° / 8° Lugar',         a: sfSlot(7,'loser'),  b: sfSlot(8,'loser'),  idA: sfSlotId(7,'loser'),  idB: sfSlotId(8,'loser'),  hora: null, lugar: null, cancha: null },
       ],
     },
     {
