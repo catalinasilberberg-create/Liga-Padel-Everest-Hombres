@@ -10,6 +10,7 @@ const links = [
   { href: '/fixture', label: 'Fixture', icon: '📅' },
   { href: '/resultados', label: 'Resultados', icon: '📊' },
   { href: '/resultado', label: 'Mi resultado', icon: '🎾' },
+  { href: '/honor', label: 'Honor', icon: '🎖️' },
 ]
 
 export default function Navbar() {
