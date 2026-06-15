@@ -352,7 +352,8 @@ export default function FixtureTabs({
             // Solo IA muestra tarjetas reales si tiene partidos en esta fecha
             const grupoKey = GRUPOS.find((gr) => gr.label === g.label)?.key
             const reales = grupoKey ? partidosFecha.filter((p) => p.pareja1?.grupo === grupoKey) : []
-            if (reales.length > 0) {
+            // Si hay un set completo de finales (4 partidos), reemplazar bracket con tarjetas reales
+            if (reales.length >= 4) {
               const color = getColorGrupo(grupoKey!)
               return (
                 <div key={g.label}>
@@ -372,24 +373,33 @@ export default function FixtureTabs({
                 </div>
               )
             }
-            // Si no hay partidos reales, mostrar bracket dinámico
+            // Mostrar bracket dinámico + partidos extra si los hay
             return (
-              <div key={g.label} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                <div className="px-4 py-2.5 bg-[#1e3a5f] text-white">
-                  <h3 className="font-bold text-sm uppercase tracking-wider">{g.label}</h3>
-                </div>
-                <div className="divide-y divide-gray-50">
-                  {g.bloques.map((b, i) => (
-                    <div key={i} className="px-3 py-2">
-                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">{b.titulo}</p>
-                      <div className="flex items-center gap-2">
-                        <span className="flex-1 min-w-0 text-xs font-medium text-gray-800 truncate">{b.a}</span>
-                        <span className="text-xs text-gray-300 shrink-0">vs</span>
-                        <span className="flex-1 min-w-0 text-xs font-medium text-gray-800 truncate text-right">{b.b}</span>
+              <div key={g.label}>
+                <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                  <div className="px-4 py-2.5 bg-[#1e3a5f] text-white">
+                    <h3 className="font-bold text-sm uppercase tracking-wider">{g.label}</h3>
+                  </div>
+                  <div className="divide-y divide-gray-50">
+                    {g.bloques.map((b, i) => (
+                      <div key={i} className="px-3 py-2">
+                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">{b.titulo}</p>
+                        <div className="flex items-center gap-2">
+                          <span className="flex-1 min-w-0 text-xs font-medium text-gray-800 truncate">{b.a}</span>
+                          <span className="text-xs text-gray-300 shrink-0">vs</span>
+                          <span className="flex-1 min-w-0 text-xs font-medium text-gray-800 truncate text-right">{b.b}</span>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
+                {reales.length > 0 && grupoKey && (
+                  <div className="mt-1.5 grid gap-1.5 sm:grid-cols-2">
+                    {reales.map((p) => (
+                      <PartidoCard key={p.id} partido={p} grupo={grupoKey} />
+                    ))}
+                  </div>
+                )}
               </div>
             )
           })}
