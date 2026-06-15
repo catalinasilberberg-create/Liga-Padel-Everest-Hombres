@@ -221,32 +221,47 @@ export default function FixtureTabs({
     return tipo === 'winner' ? r.winner : r.loser
   }
 
+  const sfSlotId = (num: number, tipo: 'winner' | 'loser'): number | null => {
+    if (!sfPartidos || !qfPartidos) return null
+    const r = getSFWinnerLoserId(sfPartidos, num, qfPartidos)
+    if (!r) return null
+    return tipo === 'winner' ? r.winner : r.loser
+  }
+
+  const findRealPartido = (idA: number | null, idB: number | null): Partido | null => {
+    if (!idA || !idB) return null
+    return partidosFecha.find(p =>
+      (p.pareja1_id === idA && p.pareja2_id === idB) ||
+      (p.pareja1_id === idB && p.pareja2_id === idA)
+    ) ?? null
+  }
+
   const finalBracket = [
     {
       label: 'Intermedia',
       bloques: [
-        { titulo: 'Final · 1° / 2° Lugar', a: sfSlot(1,'winner'), b: sfSlot(2,'winner') },
-        { titulo: '3° / 4° Lugar',         a: sfSlot(1,'loser'),  b: sfSlot(2,'loser')  },
-        { titulo: '5° / 6° Lugar',         a: sfSlot(3,'winner'), b: sfSlot(4,'winner') },
-        { titulo: '7° / 8° Lugar',         a: sfSlot(3,'loser'),  b: sfSlot(4,'loser')  },
+        { titulo: 'Final · 1° / 2° Lugar', a: sfSlot(1,'winner'), b: sfSlot(2,'winner'), idA: sfSlotId(1,'winner'), idB: sfSlotId(2,'winner') },
+        { titulo: '3° / 4° Lugar',         a: sfSlot(1,'loser'),  b: sfSlot(2,'loser'),  idA: sfSlotId(1,'loser'),  idB: sfSlotId(2,'loser')  },
+        { titulo: '5° / 6° Lugar',         a: sfSlot(3,'winner'), b: sfSlot(4,'winner'), idA: sfSlotId(3,'winner'), idB: sfSlotId(4,'winner') },
+        { titulo: '7° / 8° Lugar',         a: sfSlot(3,'loser'),  b: sfSlot(4,'loser'),  idA: sfSlotId(3,'loser'),  idB: sfSlotId(4,'loser')  },
       ],
     },
     {
       label: 'Intermedia Alta',
       bloques: [
-        { titulo: 'Final · 1° / 2° Lugar', a: sfSlot(5,'winner'), b: sfSlot(6,'winner') },
-        { titulo: '3° / 4° Lugar',         a: sfSlot(5,'loser'),  b: sfSlot(6,'loser')  },
-        { titulo: '5° / 6° Lugar',         a: sfSlot(7,'winner'), b: sfSlot(8,'winner') },
-        { titulo: '7° / 8° Lugar',         a: sfSlot(7,'loser'),  b: sfSlot(8,'loser')  },
+        { titulo: 'Final · 1° / 2° Lugar', a: sfSlot(5,'winner'), b: sfSlot(6,'winner'), idA: sfSlotId(5,'winner'), idB: sfSlotId(6,'winner') },
+        { titulo: '3° / 4° Lugar',         a: sfSlot(5,'loser'),  b: sfSlot(6,'loser'),  idA: sfSlotId(5,'loser'),  idB: sfSlotId(6,'loser')  },
+        { titulo: '5° / 6° Lugar',         a: sfSlot(7,'winner'), b: sfSlot(8,'winner'), idA: sfSlotId(7,'winner'), idB: sfSlotId(8,'winner') },
+        { titulo: '7° / 8° Lugar',         a: sfSlot(7,'loser'),  b: sfSlot(8,'loser'),  idA: sfSlotId(7,'loser'),  idB: sfSlotId(8,'loser')  },
       ],
     },
     {
       label: 'Avanzada',
       bloques: [
-        { titulo: 'Final · 1° / 2° Lugar', a: sfSlot(9, 'winner'), b: sfSlot(10,'winner') },
-        { titulo: '3° / 4° Lugar',         a: sfSlot(9, 'loser'),  b: sfSlot(10,'loser')  },
-        { titulo: '5° / 6° Lugar',         a: sfSlot(11,'winner'), b: sfSlot(12,'winner') },
-        { titulo: '7° / 8° Lugar',         a: sfSlot(11,'loser'),  b: sfSlot(12,'loser')  },
+        { titulo: 'Final · 1° / 2° Lugar', a: sfSlot(9, 'winner'), b: sfSlot(10,'winner'), idA: sfSlotId(9,'winner'),  idB: sfSlotId(10,'winner') },
+        { titulo: '3° / 4° Lugar',         a: sfSlot(9, 'loser'),  b: sfSlot(10,'loser'),  idA: sfSlotId(9,'loser'),   idB: sfSlotId(10,'loser')  },
+        { titulo: '5° / 6° Lugar',         a: sfSlot(11,'winner'), b: sfSlot(12,'winner'), idA: sfSlotId(11,'winner'), idB: sfSlotId(12,'winner') },
+        { titulo: '7° / 8° Lugar',         a: sfSlot(11,'loser'),  b: sfSlot(12,'loser'),  idA: sfSlotId(11,'loser'),  idB: sfSlotId(12,'loser')  },
       ],
     },
   ]
@@ -421,16 +436,34 @@ export default function FixtureTabs({
                     <h3 className="font-bold text-sm uppercase tracking-wider">{g.label}</h3>
                   </div>
                   <div className="divide-y divide-gray-50">
-                    {g.bloques.map((b, i) => (
-                      <div key={i} className="px-3 py-2">
-                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">{b.titulo}</p>
-                        <div className="flex items-center gap-2">
-                          <span className="flex-1 min-w-0 text-xs font-medium text-gray-800 truncate">{b.a}</span>
-                          <span className="text-xs text-gray-300 shrink-0">vs</span>
-                          <span className="flex-1 min-w-0 text-xs font-medium text-gray-800 truncate text-right">{b.b}</span>
+                    {g.bloques.map((b, i) => {
+                      const rp = findRealPartido(b.idA ?? null, b.idB ?? null)
+                      const jugado = rp?.jugado && rp.set1_p1 !== null
+                      const pts = rp && jugado ? calcularPuntos(rp) : null
+                      const ganadorA = pts && b.idA && (
+                        (rp!.pareja1_id === b.idA ? pts.p1 : pts.p2) >
+                        (rp!.pareja1_id === b.idA ? pts.p2 : pts.p1)
+                      )
+                      return (
+                        <div key={i} className="px-3 py-2">
+                          <p className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">{b.titulo}</p>
+                          <div className="flex items-center gap-2">
+                            <span className={`flex-1 min-w-0 text-xs truncate ${jugado && ganadorA ? 'font-bold text-gray-900' : 'font-medium text-gray-600'}`}>{b.a}</span>
+                            {jugado && rp ? (
+                              <span className="text-xs text-gray-400 shrink-0 font-mono">
+                                {rp.pareja1_id === b.idA
+                                  ? `${rp.set1_p1}-${rp.set1_p2} ${rp.set2_p1}-${rp.set2_p2}${rp.tb_p1 !== null ? ` (${rp.tb_p1}-${rp.tb_p2})` : ''}`
+                                  : `${rp.set1_p2}-${rp.set1_p1} ${rp.set2_p2}-${rp.set2_p1}${rp.tb_p1 !== null ? ` (${rp.tb_p2}-${rp.tb_p1})` : ''}`
+                                }
+                              </span>
+                            ) : (
+                              <span className="text-xs text-gray-300 shrink-0">vs</span>
+                            )}
+                            <span className={`flex-1 min-w-0 text-xs truncate text-right ${jugado && !ganadorA ? 'font-bold text-gray-900' : 'font-medium text-gray-600'}`}>{b.b}</span>
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      )
+                    })}
                   </div>
                 </div>
                 {reales.filter((p) => !isInBracket(p)).length > 0 && grupoKey && (
