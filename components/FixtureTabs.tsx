@@ -80,6 +80,24 @@ function buildSFPairing(qfPartidos: Partido[], sfNum: number): { p1: number; p2:
   return pairs[sfNum]?.() ?? null
 }
 
+function getSFWinnerLoserId(
+  sfPartidos: Partido[],
+  sfNum: number,
+  qfPartidos: Partido[]
+): { winner: number; loser: number } | null {
+  const pairing = buildSFPairing(qfPartidos, sfNum)
+  if (!pairing) return null
+  const p = sfPartidos.find(
+    (x) => (x.pareja1_id === pairing.p1 && x.pareja2_id === pairing.p2) ||
+            (x.pareja1_id === pairing.p2 && x.pareja2_id === pairing.p1)
+  )
+  if (!p || !p.jugado || p.set1_p1 === null) return null
+  const pts = calcularPuntos(p)
+  if (pts.p1 > pts.p2) return { winner: p.pareja1_id, loser: p.pareja2_id }
+  if (pts.p2 > pts.p1) return { winner: p.pareja2_id, loser: p.pareja1_id }
+  return { winner: p.pareja1_id, loser: p.pareja2_id }
+}
+
 function getSFWinnerLoser(
   sfPartidos: Partido[],
   sfNum: number,
@@ -346,6 +364,29 @@ export default function FixtureTabs({
         </div>
       ) : esFinal ? (
         /* ── Final proyectada ─────────────────────────────────────────── */
+        (() => {
+          // Construir set de pares de parejas ya cubiertos por el bracket dinámico
+          const bracketPairs = new Set<string>()
+          if (sfPartidos && qfPartidos) {
+            for (let n = 1; n <= 12; n++) {
+              const pairing = buildSFPairing(qfPartidos, n)
+              if (!pairing) continue
+              const r = getSFWinnerLoserId(sfPartidos, n, qfPartidos)
+              if (!r) continue
+              // Final: winner vs next winner; 3°/4°: loser vs next loser
+              // Se registran todos los posibles pares que el bracket resuelve
+              const key1 = [Math.min(r.winner, r.loser), Math.max(r.winner, r.loser)].join('-')
+              bracketPairs.add(key1)
+              // también el pairing del SF en sí
+              const key2 = [Math.min(pairing.p1, pairing.p2), Math.max(pairing.p1, pairing.p2)].join('-')
+              bracketPairs.add(key2)
+            }
+          }
+          const isInBracket = (p: Partido) => {
+            const key = [Math.min(p.pareja1_id, p.pareja2_id), Math.max(p.pareja1_id, p.pareja2_id)].join('-')
+            return bracketPairs.has(key)
+          }
+          return (
         <div className="space-y-4">
           <p className="text-xs text-gray-400">Se actualiza según resultados de semifinales</p>
           {finalBracket.map((g) => {
@@ -393,9 +434,9 @@ export default function FixtureTabs({
                     ))}
                   </div>
                 </div>
-                {reales.length > 0 && grupoKey && (
+                {reales.filter((p) => !isInBracket(p)).length > 0 && grupoKey && (
                   <div className="mt-1.5 grid gap-1.5 sm:grid-cols-2">
-                    {reales.map((p) => (
+                    {reales.filter((p) => !isInBracket(p)).map((p) => (
                       <PartidoCard key={p.id} partido={p} grupo={grupoKey} />
                     ))}
                   </div>
@@ -404,6 +445,8 @@ export default function FixtureTabs({
             )
           })}
         </div>
+          )
+        })()
       ) : (
         /* ── Partidos normales ────────────────────────────────────────── */
         (() => {
