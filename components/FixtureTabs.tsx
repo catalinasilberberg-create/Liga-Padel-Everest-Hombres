@@ -136,6 +136,11 @@ const PARTIDO_NOTAS: Record<number, string> = {
   272: '7° / 8° Lugar',
   273: 'Amistoso',
   274: 'Amistoso',
+  // Intermedia Alta 16.06
+  281: 'Final',
+  282: '3° / 4° Lugar',
+  283: '5° / 6° Lugar',
+  284: '7° / 8° Lugar',
   // Intermedia 16.06
   288: 'Amistoso',
   285: '3° / 4° Lugar',
