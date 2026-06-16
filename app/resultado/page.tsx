@@ -47,7 +47,7 @@ export default function ResultadoJugadoraPage() {
     supabase.from('fechas').select('*').order('numero').then(({ data }) => {
       if (data) {
         const hoy = new Date().toISOString().split('T')[0]
-        const reciente = [...data].reverse().find((f) => f.fecha <= hoy) ?? data[0]
+        const reciente = [...data].sort((a, b) => b.fecha.localeCompare(a.fecha)).find((f) => f.fecha <= hoy) ?? data[0]
         if (reciente) setFechaId(reciente.id)
         setFechas(data)
       }
