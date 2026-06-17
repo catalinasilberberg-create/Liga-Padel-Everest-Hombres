@@ -1,4 +1,6 @@
 import { getParejas, getPartidos, getUltimaFecha } from '@/lib/data'
+
+export const revalidate = 0
 import { calcularPosiciones, calcularPuntos } from '@/lib/calculos'
 import TablaGrupo from '@/components/TablaGrupo'
 import { Grupo, Partido } from '@/lib/types'
